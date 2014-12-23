@@ -4,6 +4,9 @@
     <Filter Include="Public">
       <UniqueIdentifier>{7c9ea9d5-33ce-4ab4-a5fe-41f736fa73a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File">
+      <UniqueIdentifier>{06fda6c9-25f8-4fb8-966d-bc32ed2e3852}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public.h" />
@@ -15,6 +18,9 @@
     </ClInclude>
     <ClInclude Include="Common.h" />
     <ClInclude Include="Macro.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
       <Filter>Public</Filter>
     </ClInclude>
   </ItemGroup>

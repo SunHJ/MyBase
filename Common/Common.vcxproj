@@ -79,6 +79,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Global.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="Public.h" />
