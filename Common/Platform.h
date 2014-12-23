@@ -27,6 +27,8 @@
 	#undef WIN32_LEAN_AND_MEAN
 #else
 	#include <unistd.h>
+	#define TRUE	1
+	#define FALSE	0
 #endif // WIN32
 
 

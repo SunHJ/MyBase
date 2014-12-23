@@ -1,25 +1,15 @@
-#ifndef __GLOBAL_H__
+ï»¿#ifndef __GLOBAL_H__
 #define __GLOBAL_H__
 #include "Macro.h"
 #include "Type.h"
 
 
 /*--------------------------------- GLOBAL VARIABLE DEFINE ----------------------------------*/
-#ifdef PLATFORM_OS_WINDOWS      // BZ_PLATFORM_OS_WINDOWS
 
-const int MAX_FILE_PATH_LEN = _MAX_PATH;                 // Include '\0' character
-const int MAX_FILE_NAME_LEN = _MAX_FNAME;                // Include '\0' character
-const int MAX_FILE_EXT_LEN	= _MAX_EXT;                  // Include '\0' character
-const int MAX_DIR_NAME_LEN	= _MAX_DIR;                  // Include '\0' character
-
-#else                           // BZ_PLATFORM_OS_LINUX
-
-const int MAX_FILE_PATH_LEN = PATH_MAX;                  // Include '\0' character
-const int MAX_FILE_NAME_LEN = NAME_MAX + 1;              // Include '\0' character
-const int MAX_FILE_EXT_LEN	= NAME_MAX + 1;              // Include '\0' character
-const int MAX_DIR_NAME_LEN	= NAME_MAX + 1;              // Include '\0' character
-
-#endif // BZ_PLATFORM_OS_WINDOWS
+const int MAX_FILE_PATH_LEN = 260;                // Include '\0' character
+const int MAX_FILE_NAME_LEN = 256;                // Include '\0' character
+const int MAX_FILE_EXT_LEN	= 256;                // Include '\0' character
+const int MAX_DIR_NAME_LEN	= 256;                // Include '\0' character
 
 const int MAX_IP_ADDR_LEN = 16;                     // Include '\0' character
 const DWORD INVALID_ID_VALUE = static_cast<DWORD>(-1); // Invalid number id of a string
@@ -46,6 +36,7 @@ private:
 protected:
 	~UnConstructable() {}
 };
+
 /*---------------------------------- GLOBAL FUNCTION DEFINE ---------------------------------*/
 template <class T>
 inline T g_Max(const T &lhs, const T &rhs)
@@ -407,7 +398,7 @@ inline long g_InterlockedIncrement(long *plValue)
 	__asm__ __volatile__
 	(
 		"movl $0x01, %%eax\n"                                           // 0x01 -> eax
-		"lock xaddl %%eax, (%1)\n"                                      // plValueºÍeaxÄÚÈİ½»»» plValue += eax
+		"lock xaddl %%eax, (%1)\n"                                      // plValueå’Œeaxå†…å®¹äº¤æ¢ plValue += eax
 		"incl %%eax\n"                                                  // eax += 1
 		:
 		"=a"(lResult)
@@ -441,11 +432,11 @@ inline long g_InterlockedExchange(volatile long *pTarget, long lValue)
 {
 	__asm__ __volatile__
 	(
-		"xchgl %k0, %1"                                                 // xchglÖ´ĞĞÊ±Ä¬ÈÏ»áËøÄÚ´æ×ÜÏß£¬%k0 : 32Î»µÄ¼Ä´æÆ÷,
+		"xchgl %k0, %1"                                                 // xchglæ‰§è¡Œæ—¶é»˜è®¤ä¼šé”å†…å­˜æ€»çº¿ï¼Œ%k0 : 32ä½çš„å¯„å­˜å™¨,
 		:
-		"=r" (lValue)                                               // %0 : ÈÎÒ»Í¨ÓÃ¼Ä´æÆ÷·µ»Ø
+		"=r" (lValue)                                               // %0 : ä»»ä¸€é€šç”¨å¯„å­˜å™¨è¿”å›
 		:
-		"m" (*((volatile long *)Target)), "0" (lValue)              // %1 - m±íÊ¾²Ù×÷Êı´æ·ÅÔÚÄÚ´æ£¬ "0¡å±íÊ¾Ö¸¶¨µÚ0¸öÊä³ö±äÁ¿(lValue)ÏàÍ¬µÄÔ¼Êø
+		"m" (*((volatile long *)Target)), "0" (lValue)              // %1 - mè¡¨ç¤ºæ“ä½œæ•°å­˜æ”¾åœ¨å†…å­˜ï¼Œ "0â€³è¡¨ç¤ºæŒ‡å®šç¬¬0ä¸ªè¾“å‡ºå˜é‡(lValue)ç›¸åŒçš„çº¦æŸ
 		:
 		"memory"
 	);
