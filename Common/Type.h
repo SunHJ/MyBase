@@ -19,7 +19,9 @@ size_t              4                   8                   4                   
 #ifdef PLATFORM_OS_WINDOWS
 #else
 typedef int                     BOOL;       // 4bytes
+typedef int						INT;		// 4bytes
 typedef unsigned char           BYTE;       // 1bytes
+typedef char					CHAR;		// 1bytes
 typedef unsigned short          WORD;       // 2bytes
 typedef unsigned int            DWORD;      // 4bytes
 typedef long					LONG;       // 4bytes
