@@ -205,21 +205,21 @@ inline VOID g_ConvertToHexString(
 	pDst[nDstLen - 1] = '\0';
 }
 
-inline BOOL g_IsBlankCharacter(IN CONST CHAR c)
+inline BOOL g_IsBlankCharacter(CONST CHAR c)
 {
 	if (c == ' ' || c == '\t')
 		return TRUE;
 	return FALSE;
 }
 
-inline BOOL g_IsEnterCharacter(IN CONST CHAR c)
+inline BOOL g_IsEnterCharacter(CONST CHAR c)
 {
 	if (c == '\r' || c == '\n')
 		return TRUE;
 	return FALSE;
 }
 
-inline STRING g_TrimString(CONST STRING &s, IN CONST CHAR c)
+inline STRING g_TrimString(CONST STRING &s, CONST CHAR c)
 {
 	STRING temp = s;
 	if (temp.empty())  
