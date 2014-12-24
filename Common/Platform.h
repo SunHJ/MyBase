@@ -14,11 +14,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
 #include <assert.h>
-#include <ctype.h>
-#include <algorithm>
+#include <ctype.h>	
+#include <string>	
 #include <vector>
+#include <algorithm>
 
 #ifdef WIN32
 	#define WIN32_LEAN_AND_MEAN			 // 不加载MFC所需的模块。在编译链接时，以及在最后生成的一些供调试用的模块时，速度更快，容量更小。
