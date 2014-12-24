@@ -57,4 +57,5 @@ typedef const DOUBLE *          PCDOUBLE;
 typedef       DOUBLE * const    CPDOUBLE;
 typedef const DOUBLE * const    CPCDOUBLE;
 
+
 #endif //__TYPE_H__
