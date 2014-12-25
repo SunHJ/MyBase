@@ -1,5 +1,5 @@
-﻿#ifndef __GLOBAL_H__
-#define __GLOBAL_H__
+﻿#ifndef __PUBLIC_GLOBAL_H__
+#define __PUBLIC_GLOBAL_H__
 #include "Macro.h"
 #include "Type.h"
 
@@ -13,29 +13,6 @@ CONST int MAX_DIR_NAME_LEN	= 256;                // Include '\0' character
 
 CONST int MAX_IP_ADDR_LEN = 16;                     // Include '\0' character
 CONST DWORD INVALID_ID_VALUE = static_cast<DWORD>(-1); // Invalid number id of a string
-
-/*----------------------------------- GLOBAL CLASS DEFINE -----------------------------------*/
-class UnCopyable
-{
-protected:
-	UnCopyable()  {}
-	~UnCopyable() {}
-
-private:
-	UnCopyable(CONST UnCopyable &);
-	UnCopyable &operator=(CONST UnCopyable &);
-};
-
-class UnConstructable
-{
-private:
-	UnConstructable() {}
-	UnConstructable(CONST UnConstructable &);
-	UnConstructable &operator=(CONST UnConstructable &);
-
-protected:
-	~UnConstructable() {}
-};
 
 /*---------------------------------- GLOBAL FUNCTION DEFINE ---------------------------------*/
 template <class T>
@@ -169,6 +146,23 @@ inline VOID g_SetErrorCode(T *pErrorCode, T code)
 {
 	if (NULL != pErrorCode)
 		*pErrorCode = code;
+}
+
+inline BOOL g_CheckHandle(CONST HANDLE &handle)
+{
+	CHECK_RETURN_BOOL_QUIET(NULL != handle && INVALID_HANDLE_VALUE != handle);
+	return TRUE;
+}
+
+inline VOID g_CloseHandle(HANDLE &handle)
+{
+#ifdef WIN32
+	if (NULL != handle && INVALID_HANDLE_VALUE != handle)
+	{
+		ASSERT(::CloseHandle(handle));
+		handle = INVALID_HANDLE_VALUE;
+	}
+#endif
 }
 
 inline DWORD g_HashString2ID(CPCCHAR cpcString)
@@ -461,4 +455,4 @@ inline LONG g_InterlockedExchangeAdd(LONG *plValue, LONG lAddValue)
 
 #endif  // WIN32
 
-#endif	//__GLOBAL_H__
+#endif	//__PUBLIC_GLOBAL_H__

@@ -1,5 +1,5 @@
-#ifndef __TYPE_H__
-#define __TYPE_H__
+#ifndef __PUBLIC_TYPE_H__
+#define __PUBLIC_TYPE_H__
 #include "Platform.h"
 
 /*------------------------------------------------------------------------------------------
@@ -30,6 +30,7 @@ size_t              4                   8                   4                   
     typedef unsigned int			ULONG_PTR;  // 4bytes
 #endif //PLATFORM_OS_WINDOWS
 
+typedef unsigned int			UINT;
 typedef float					FLOAT;
 typedef double					DOUBLE;
 typedef	std::string				STRING;
@@ -64,4 +65,27 @@ typedef const DOUBLE *          PCDOUBLE;
 typedef       DOUBLE * const    CPDOUBLE;
 typedef const DOUBLE * const    CPCDOUBLE;
 
-#endif //__TYPE_H__
+/*----------------------------------- GLOBAL CLASS DEFINE -----------------------------------*/
+class UnCopyable
+{
+protected:
+	UnCopyable()  {}
+	~UnCopyable() {}
+
+private:
+	UnCopyable(CONST UnCopyable &);
+	UnCopyable &operator=(CONST UnCopyable &);
+};
+
+class UnConstructable
+{
+private:
+	UnConstructable() {}
+	UnConstructable(CONST UnConstructable &);
+	UnConstructable &operator=(CONST UnConstructable &);
+
+protected:
+	~UnConstructable() {}
+};
+
+#endif //__PUBLIC_TYPE_H__

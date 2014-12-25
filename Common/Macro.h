@@ -1,5 +1,5 @@
-#ifndef __MACRO_H__
-#define __MACRO_H__
+#ifndef __PUBLIC_MACRO_H__
+#define __PUBLIC_MACRO_H__
 
 #include "Platform.h"
 
@@ -199,4 +199,4 @@ MS VC++ 5.0                         _MSC_VER = 1100
 
 #pragma warning(disable:4996) 
 
-#endif // __MACRO_H__
+#endif // __PUBLIC_MACRO_H__

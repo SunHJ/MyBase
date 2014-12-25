@@ -1,5 +1,5 @@
-#ifndef __PLATFORM_H__
-#define __PLATFORM_H__
+#ifndef __PUBLIC_PLATFORM_H__
+#define __PUBLIC_PLATFORM_H__
 
 /*----------------------------------- SYSTEM MACRO DEFINE -----------------------------------*/
 
@@ -34,4 +34,4 @@
     #define CONST   const
 #endif // WIN32
 
-#endif
+#endif	// __PUBLIC_PLATFORM_H__

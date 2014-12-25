@@ -7,6 +7,9 @@
     <Filter Include="File">
       <UniqueIdentifier>{06fda6c9-25f8-4fb8-966d-bc32ed2e3852}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Synchronization">
+      <UniqueIdentifier>{8f39f42c-2f57-46a2-8cf5-1a483ada1d81}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public.h" />
@@ -23,5 +26,13 @@
     <ClInclude Include="Global.h">
       <Filter>Public</Filter>
     </ClInclude>
+    <ClInclude Include="Thread.h">
+      <Filter>Synchronization</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Thread.cpp">
+      <Filter>Synchronization</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

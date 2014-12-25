@@ -1,8 +1,9 @@
-#ifndef __INCLUDE_H__
-#define __INCLUDE_H__
+#ifndef __INCLUDE_COMMON_H__
+#define __INCLUDE_COMMON_H__
 
 #include "Type.h"
 #include "Macro.h"
 #include "Global.h"
+#include "Thread.h"
 
-#endif
+#endif //__INCLUDE_COMMON_H__
