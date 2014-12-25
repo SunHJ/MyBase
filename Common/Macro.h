@@ -10,6 +10,7 @@
 	#endif // NULL
 
 #else                           // C
+
 	#ifndef NULL
 	#define NULL        ((void*)0)
 	#endif // NULL
@@ -32,13 +33,12 @@ MS VC++ 5.0                         _MSC_VER = 1100
 ------------------------------------------------------------------------------------------*/
 #undef DISABLE_WARNING
 #ifdef _MSC_VER                 // MS VC++
-#define DISABLE_WARNING(warning_code, expression) \
-	__pragma(warning(push)) \
-	__pragma(warning(disable:warning_code)) expression \
-	__pragma(warning(pop))
+    #define DISABLE_WARNING(warning_code, expression) \
+	    __pragma(warning(push)) \
+    	__pragma(warning(disable:warning_code)) expression \
+	    __pragma(warning(pop))
 #else                           // GCC
-#define DISABLE_WARNING(warning_code, expression) \
-	expression
+    #define DISABLE_WARNING(warning_code, expression) expression
 #endif // _MSC_VER
 
 #undef  WHILE_FALSE_NO_WARNING
@@ -55,8 +55,8 @@ MS VC++ 5.0                         _MSC_VER = 1100
 #define PROCESS_ERROR(condition) \
 	do { \
 		if (!(condition)) { \
-		ASSERT_FALSE(condition); \
-		goto Exit0; \
+		    ASSERT_FALSE(condition); \
+		    goto Exit0; \
 		} \
 	} WHILE_FALSE_NO_WARNING
 

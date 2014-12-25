@@ -6,13 +6,13 @@
 
 /*--------------------------------- GLOBAL VARIABLE DEFINE ----------------------------------*/
 
-const int MAX_FILE_PATH_LEN = 260;                // Include '\0' character
-const int MAX_FILE_NAME_LEN = 256;                // Include '\0' character
-const int MAX_FILE_EXT_LEN	= 256;                // Include '\0' character
-const int MAX_DIR_NAME_LEN	= 256;                // Include '\0' character
+CONST int MAX_FILE_PATH_LEN = 260;                // Include '\0' character
+CONST int MAX_FILE_NAME_LEN = 256;                // Include '\0' character
+CONST int MAX_FILE_EXT_LEN	= 256;                // Include '\0' character
+CONST int MAX_DIR_NAME_LEN	= 256;                // Include '\0' character
 
-const int MAX_IP_ADDR_LEN = 16;                     // Include '\0' character
-const DWORD INVALID_ID_VALUE = static_cast<DWORD>(-1); // Invalid number id of a string
+CONST int MAX_IP_ADDR_LEN = 16;                     // Include '\0' character
+CONST DWORD INVALID_ID_VALUE = static_cast<DWORD>(-1); // Invalid number id of a string
 
 /*----------------------------------- GLOBAL CLASS DEFINE -----------------------------------*/
 class UnCopyable
@@ -22,16 +22,16 @@ protected:
 	~UnCopyable() {}
 
 private:
-	UnCopyable(const UnCopyable &);
-	UnCopyable &operator=(const UnCopyable &);
+	UnCopyable(CONST UnCopyable &);
+	UnCopyable &operator=(CONST UnCopyable &);
 };
 
 class UnConstructable
 {
 private:
 	UnConstructable() {}
-	UnConstructable(const UnConstructable &);
-	UnConstructable &operator=(const UnConstructable &);
+	UnConstructable(CONST UnConstructable &);
+	UnConstructable &operator=(CONST UnConstructable &);
 
 protected:
 	~UnConstructable() {}
@@ -39,61 +39,61 @@ protected:
 
 /*---------------------------------- GLOBAL FUNCTION DEFINE ---------------------------------*/
 template <class T>
-inline T g_Max(const T &lhs, const T &rhs)
+inline T g_Max(CONST T &lhs,CONST T &rhs)
 {
 	return lhs > rhs ? lhs : rhs;
 }
 
 template <class T>
-inline T g_Min(const T &lhs, const T &rhs)
+inline T g_Min(CONST T &lhs,CONST T &rhs)
 {
 	return lhs > rhs ? rhs : lhs;
 }
 
 template <class T>
-inline void g_Swap(T &lhs, T &rhs)
+inline VOID g_Swap(T &lhs, T &rhs)
 {
 	T temp = lhs;           // copy   content
 	lhs = rhs, rhs = temp;  // switch content
 }
 
 template <class T>
-inline BYTE g_GetMemBYTE(const T * const p)
+inline BYTE g_GetMemBYTE(CONST T *CONST p)
 {
 	return *((BYTE*)(p));
 }
 
 template <class T>
-inline WORD g_GetMemWORD(const T * const p)
+inline WORD g_GetMemWORD(CONST T *CONST p)
 {
 	return *((WORD*)(p));
 }
 
 template <class T>
-inline DWORD g_GetMemDWORD(const T * const p)
+inline DWORD g_GetMemDWORD(CONST T *CONST p)
 {
 	return *((DWORD *)(p));
 }
 
 template <class T>
-inline void g_SafelyIncrement(T &value)
+inline VOID g_SafelyIncrement(T &value)
 {
 	value = ((value)+1 > (value)) ? (value)+1 : (value);
 }
 
 template<class T>
-inline void g_ZeroMemory(T *p, size_t nMemSize)
+inline VOID g_ZeroMemory(T *p, size_t nMemSize)
 {
 	CHECK_POINTER_RETURN_VOID_QUIET(p);
-	::memset((void *)p, 0, nMemSize);
+	::memset((VOID *)p, 0, nMemSize);
 }
 
 template <class T>
-inline void g_SafelyDeletePtr(T *&p)
+inline VOID g_SafelyDeletePtr(T *&p)
 {
 	// check if type is complete
-	typedef char TypeMustBeComplete[sizeof(T) ? 1 : -1];
-	(void)sizeof(TypeMustBeComplete);
+	typedef CHAR TypeMustBeComplete[sizeof(T) ? 1 : -1];
+	(VOID)sizeof(TypeMustBeComplete);
 
 	if (NULL != p)
 	{
@@ -102,11 +102,11 @@ inline void g_SafelyDeletePtr(T *&p)
 }
 
 template <class T>
-inline void g_SafelyDeleteArrayPtr(T *&p)
+inline VOID g_SafelyDeleteArrayPtr(T *&p)
 {
 	// check if type is complete 
-	typedef char TypeMustBeComplete[sizeof(T) ? 1 : -1];
-	(void)sizeof(TypeMustBeComplete);
+	typedef CHAR TypeMustBeComplete[sizeof(T) ? 1 : -1];
+	(VOID)sizeof(TypeMustBeComplete);
 
 	if (NULL != p)
 	{
@@ -115,22 +115,22 @@ inline void g_SafelyDeleteArrayPtr(T *&p)
 }
 
 template <class T>
-inline void g_SafelyDeleteConstPtr(T *const p)
+inline VOID g_SafelyDeleteCONSTPtr(T *CONST p)
 {
 	// check if type is complete
-	typedef char TypeMustBeComplete[sizeof(T) ? 1 : -1];
-	(void)sizeof(TypeMustBeComplete);
+	typedef CHAR TypeMustBeComplete[sizeof(T) ? 1 : -1];
+	(VOID)sizeof(TypeMustBeComplete);
 
 	if (NULL != p)
 		delete p;
 }
 
 template <class T>
-inline void g_SafelyDeleteConstArrayPtr(T *const p)
+inline VOID g_SafelyDeleteCONSTArrayPtr(T *CONST p)
 {
 	// check if type is complete 
-	typedef char TypeMustBeComplete[sizeof(T) ? 1 : -1];
-	(void)sizeof(TypeMustBeComplete);
+	typedef CHAR TypeMustBeComplete[sizeof(T) ? 1 : -1];
+	(VOID)sizeof(TypeMustBeComplete);
 
 	if (NULL != p)
 		delete[] p;
@@ -144,12 +144,12 @@ inline PVOID g_AllocMemeoy(size_t nMemSize)
 	PVOID pMem = ::malloc(nMemSize);
 	CHECK_RETURN_CODE(NULL != pMem, NULL);
 
-	ZeroMemory(pMem, nMemSize);
+	g_ZeroMemory(pMem, nMemSize);
 	return pMem;
 }
 
 template <class T>
-inline void g_FreeMemeoy(T *&p)
+inline VOID g_FreeMemeoy(T *&p)
 {
 	if (NULL != p)
 	{
@@ -158,25 +158,25 @@ inline void g_FreeMemeoy(T *&p)
 }
 
 template <class T>
-inline void g_FreeConstPtr(T *const p)
+inline VOID g_FreeCONSTPtr(T *CONST p)
 {
 	if (NULL != p)
 		::free(p);
 }
 
 template <class T>
-inline void g_SetErrorCode(T *pErrorCode, T code)
+inline VOID g_SetErrorCode(T *pErrorCode, T code)
 {
 	if (NULL != pErrorCode)
 		*pErrorCode = code;
 }
 
-inline DWORD g_HashString2ID(const char * const cpcString)
+inline DWORD g_HashString2ID(CPCCHAR cpcString)
 {
 	CHECK_C_STRING_RETURN_CODE(cpcString, INVALID_ID_VALUE);
 
 	DWORD dwID = 0;
-	for (int i = 0; '\0' != cpcString[i]; i++)
+	for (INT i = 0; '\0' != cpcString[i]; i++)
 	{
 		dwID = (dwID + (i + 1) * cpcString[i]) % 0x8000000C * 0xFFFFFFEF;
 	}
@@ -185,10 +185,10 @@ inline DWORD g_HashString2ID(const char * const cpcString)
 }
 
 inline VOID g_ConvertToHexString(
-	CONST CHAR * CONST cpcSrc,
-	CONST size_t       nSrcLen,
-	CHAR *			   pDst,
-	CONST size_t       nDstLen)
+	CPCCHAR         cpcSrc,
+	CONST size_t    nSrcLen,
+	PCHAR			pDst,
+	CONST size_t    nDstLen)
 {
 	CHECK_RETURN_VOID(NULL != cpcSrc && nSrcLen>0);
 	CHECK_RETURN_VOID(NULL != pDst && nDstLen>nSrcLen * 2);
@@ -198,7 +198,7 @@ inline VOID g_ConvertToHexString(
 	for (size_t i = 0; i<nSrcLen; i++)
 	{
 		g_ZeroMemory(pTemp, 3);
-		::sprintf(pTemp, "%02X", (UCHAR)cpcSrc[i]);
+		::sprintf(pTemp, "%02X", (BYTE)cpcSrc[i]);
 		::strcat(pDst, pTemp);
 	}
 
@@ -219,7 +219,7 @@ inline BOOL g_IsEnterCharacter(CONST CHAR c)
 	return FALSE;
 }
 
-inline STRING g_TrimString(CONST STRING &s, CONST CHAR c)
+inline STRING g_TrimString(CONST STRING &s,CONST CHAR c)
 {
 	STRING temp = s;
 	if (temp.empty())  
@@ -242,11 +242,11 @@ inline VOID g_TrimString(CONST PCHAR pString, CONST CHAR c)
 {
 	CHECK_C_STRING_RETURN_VOID(pString);
 
-	INT nStringLen = ::strlen(pString);
-	PCHAR pTemp = (PCHAR)::malloc(nStringLen);
+	size_t nStringLen = ::strlen(pString);
+	CHAR * pTemp = (CHAR *)::malloc(nStringLen);
 	g_ZeroMemory(pTemp, nStringLen);
 
-	for (INT i = 0; i < nStringLen; i++)
+	for (size_t i = 0; i < nStringLen; i++)
 	{
 		if (pString[i] != c)
 			pTemp[i] = pString[i];
@@ -260,10 +260,10 @@ inline VOID g_TrimStingBothEnds(CONST PCHAR pString, CONST CHAR c)
 {
 	CHECK_C_STRING_RETURN_VOID(pString);
 
-	INT nStringLen = ::strlen(pString);
-	INT nHead = 0, nTail = nStringLen - 1;
+	size_t nStringLen = ::strlen(pString);
+	size_t nHead = 0, nTail = nStringLen - 1;
 
-	for (INT i = 0; i<nStringLen; i++)
+	for (size_t i = 0; i < nStringLen; i++)
 	{
 		if (pString[nHead] == c)
 			nHead++;
@@ -288,12 +288,12 @@ inline VOID g_TrimStringBlankChar(CONST PCHAR pString)
 {
 	CHECK_C_STRING_RETURN_VOID(pString);
 
-	INT nStringLen = ::strlen(pString);
-	PCHAR pTemp = (PCHAR)g_AllocMemeoy(nStringLen);
+	size_t nStringLen = ::strlen(pString);
+	CHAR * pTemp = (CHAR *)g_AllocMemeoy(nStringLen);
 	g_ZeroMemory(pTemp, nStringLen);
 
-	INT j = 0;
-	for (INT i = 0; i<nStringLen; i++)
+	size_t j = 0;
+	for (size_t i = 0; i<nStringLen; i++)
 	{
 		if (!g_IsBlankCharacter(pString[i]))
 			pTemp[j++] = pString[i];
@@ -350,7 +350,7 @@ inline VOID g_PadWithBlanks(CONST PCHAR pBuffer, CONST size_t nBufferLen)
 
 #ifdef WIN32
 
-inline long g_InterlockedIncrement(long *plValue)
+inline LONG g_InterlockedIncrement(LONG *plValue)
 {
 #ifdef _MT
 	return ::InterlockedIncrement(plValue);
@@ -359,7 +359,7 @@ inline long g_InterlockedIncrement(long *plValue)
 #endif
 }
 
-inline long g_InterlockedDecrement(long *plValue)
+inline LONG g_InterlockedDecrement(LONG *plValue)
 {
 #ifdef _MT
 	return ::InterlockedDecrement(plValue);
@@ -368,23 +368,23 @@ inline long g_InterlockedDecrement(long *plValue)
 #endif
 }
 
-inline long g_InterlockedExchange(volatile long *pTarget, long lValue)
+inline LONG g_InterlockedExchange(volatile LONG *pTarget, LONG lValue)
 {
 #ifdef _MT
 	return ::InterlockedExchange(pTarget, lValue);
 #else
-	long lTemp = *pTarget;
+	LONG lTemp = *pTarget;
 	*pTarget = lValue;
 	return lTemp;
 #endif
 }
 
-inline long g_InterlockedExchangeAdd(long *plValue, long lAddValue)
+inline LONG g_InterlockedExchangeAdd(LONG *plValue, LONG lAddValue)
 {
 #ifdef _MT
 	return ::InterlockedExchangeAdd(plValue, lAddValue);
 #else
-	long lResult = *plValue;
+	LONG lResult = *plValue;
 	*plValue += lAddValue;
 	return lResult;
 #endif
@@ -392,9 +392,9 @@ inline long g_InterlockedExchangeAdd(long *plValue, long lAddValue)
 
 #else
 
-inline long g_InterlockedIncrement(long *plValue)
+inline LONG g_InterlockedIncrement(LONG *plValue)
 {
-	long lResult;
+	LONG lResult;
 	__asm__ __volatile__
 	(
 		"movl $0x01, %%eax\n"                                           // 0x01 -> eax
@@ -410,9 +410,9 @@ inline long g_InterlockedIncrement(long *plValue)
 	return lResult;
 }
 
-inline long g_InterlockedDecrement(long *plValue)
+inline LONG g_InterlockedDecrement(LONG *plValue)
 {
-	long lResult;
+	LONG lResult;
 	__asm__ __volatile__
 	(
 		"movl $0xffffffff, %%eax\n"
@@ -428,7 +428,7 @@ inline long g_InterlockedDecrement(long *plValue)
 	return lResult;
 }
 
-inline long g_InterlockedExchange(volatile long *pTarget, long lValue)
+inline LONG g_InterlockedExchange(volatile LONG *pTarget, LONG lValue)
 {
 	__asm__ __volatile__
 	(
@@ -436,16 +436,16 @@ inline long g_InterlockedExchange(volatile long *pTarget, long lValue)
 		:
 		"=r" (lValue)                                               // %0 : 任一通用寄存器返回
 		:
-		"m" (*((volatile long *)Target)), "0" (lValue)              // %1 - m表示操作数存放在内存， "0″表示指定第0个输出变量(lValue)相同的约束
+		"m" (*((volatile LONG *)pTarget)), "0" (lValue)              // %1 - m表示操作数存放在内存， "0″表示指定第0个输出变量(lValue)相同的约束
 		:
 		"memory"
 	);
 	return lValue;
 }
 
-inline long g_InterlockedExchangeAdd(long *plValue, long lAddValue)
+inline LONG g_InterlockedExchangeAdd(LONG *plValue, LONG lAddValue)
 {
-	long lResult;
+	LONG lResult;
 	__asm__ __volatile__
 	(
 		"lock xaddl %%eax, (%1)\n"

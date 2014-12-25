@@ -26,10 +26,12 @@
 	#include <windows.h>
 	#undef WIN32_LEAN_AND_MEAN
 #else
+    #include <string.h>
 	#include <unistd.h>
-	#define TRUE	1
-	#define FALSE	0
+    #define TRUE    1
+    #define FALSE   0
+    #define VOID    void
+    #define CONST   const
 #endif // WIN32
-
 
 #endif

@@ -18,44 +18,50 @@ size_t              4                   8                   4                   
 
 #ifdef PLATFORM_OS_WINDOWS
 #else
-typedef int                     BOOL;       // 4bytes
-typedef int						INT;		// 4bytes
-typedef unsigned char           BYTE;       // 1bytes
-typedef char					CHAR;		// 1bytes
-typedef unsigned short          WORD;       // 2bytes
-typedef unsigned int            DWORD;      // 4bytes
-typedef long					LONG;       // 4bytes
-typedef signed   long long		INT64;      // 8bytes
-typedef unsigned long long		UINT64;     // 8bytes
-typedef unsigned int			ULONG_PTR;  // 4bytes
+    typedef int                     BOOL;       // 4bytes
+    typedef int						INT;		// 4bytes
+    typedef char                    CHAR;       // 1bytes
+    typedef unsigned char           BYTE;       // 1bytes
+    typedef unsigned short          WORD;       // 2bytes
+    typedef unsigned int            DWORD;      // 4bytes
+    typedef long					LONG;       // 4bytes
+    typedef signed   long long		INT64;      // 8bytes
+    typedef unsigned long long		UINT64;     // 8bytes
+    typedef unsigned int			ULONG_PTR;  // 4bytes
 #endif //PLATFORM_OS_WINDOWS
 
 typedef float					FLOAT;
 typedef double					DOUBLE;
 typedef	std::string				STRING;
-typedef const void   *          PCVOID;
-typedef       void   * const    CPVOID;
-typedef const void   * const    CPCVOID;
 
-typedef const BYTE   *          PCBYTE;
-typedef       BYTE   * const    CPBYTE;
-typedef const BYTE   * const    CPCBYTE;
+typedef       VOID *            PVOID;
+typedef const VOID *            PCVOID;
+typedef       VOID * const      CPVOID;
+typedef const VOID * const      CPCVOID;
 
-typedef const CHAR   *          PCCHAR;
-typedef       CHAR   * const    CPCHAR;
-typedef const CHAR   * const    CPCCHAR;
+typedef       BYTE *            PBYTE;
+typedef const BYTE *            PCBYTE;
+typedef       BYTE * const      CPBYTE;
+typedef const BYTE * const      CPCBYTE;
 
-typedef const INT    *          PCINT;
-typedef       INT    * const    CPINT;
-typedef const INT    * const    CPCINT;
+typedef       CHAR *            PCHAR;
+typedef const CHAR *            PCCHAR;
+typedef       CHAR * const      CPCHAR;
+typedef const CHAR * const      CPCCHAR;
 
-typedef const FLOAT  *          PCFLOAT;
-typedef       FLOAT  * const    CPFLOAT;
-typedef const FLOAT  * const    CPCFLOAT;
+typedef       INT *             PINT;
+typedef const INT *             PCINT;
+typedef       INT * const       CPINT;
+typedef const INT * const       CPCINT;
 
+typedef       FLOAT *           PFLOAT;
+typedef const FLOAT *           PCFLOAT;
+typedef       FLOAT * const     CPFLOAT;
+typedef const FLOAT * const     CPCFLOAT;
+
+typedef       DOUBLE *          PDOUBLE;
 typedef const DOUBLE *          PCDOUBLE;
 typedef       DOUBLE * const    CPDOUBLE;
 typedef const DOUBLE * const    CPCDOUBLE;
-
 
 #endif //__TYPE_H__
