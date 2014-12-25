@@ -148,23 +148,6 @@ inline VOID g_SetErrorCode(T *pErrorCode, T code)
 		*pErrorCode = code;
 }
 
-inline BOOL g_CheckHandle(CONST HANDLE &handle)
-{
-	CHECK_RETURN_BOOL_QUIET(NULL != handle && INVALID_HANDLE_VALUE != handle);
-	return TRUE;
-}
-
-inline VOID g_CloseHandle(HANDLE &handle)
-{
-#ifdef WIN32
-	if (NULL != handle && INVALID_HANDLE_VALUE != handle)
-	{
-		ASSERT(::CloseHandle(handle));
-		handle = INVALID_HANDLE_VALUE;
-	}
-#endif
-}
-
 inline DWORD g_HashString2ID(CPCCHAR cpcString)
 {
 	CHECK_C_STRING_RETURN_CODE(cpcString, INVALID_ID_VALUE);
@@ -342,7 +325,40 @@ inline VOID g_PadWithBlanks(CONST PCHAR pBuffer, CONST size_t nBufferLen)
 	pBuffer[nBufferLen - 1] = '\0';
 }
 
+inline VOID g_MilliSleep(DWORD dwMilliSenconds)
+{
 #ifdef WIN32
+    ::Sleep(dwMilliSenconds);
+#else
+    ::usleep(dwMilliSenconds*1000);
+#endif
+}
+
+inline VOID g_Sleep(DWORD dwSeconds)
+{
+#ifdef WIN32
+    ::Sleep(dwSeconds*1000);
+#else
+    ::sleep(dwSeconds);
+#endif
+}
+
+#ifdef WIN32
+
+inline BOOL g_CheckHandle(CONST HANDLE &handle)
+{
+    CHECK_RETURN_BOOL_QUIET(NULL != handle && INVALID_HANDLE_VALUE != handle);
+	return TRUE;
+}
+
+inline VOID g_CloseHandle(HANDLE &handle)
+{
+	if (NULL != handle && INVALID_HANDLE_VALUE != handle)
+	{
+		ASSERT(::CloseHandle(handle));
+		handle = INVALID_HANDLE_VALUE;
+	}
+}   
 
 inline LONG g_InterlockedIncrement(LONG *plValue)
 {

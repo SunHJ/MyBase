@@ -15,7 +15,7 @@ UINT MyThreadClass::Run()
 	{
 		uCount++;
 		printf("%d\n", uCount);
-		::Sleep(1000);
+		g_Sleep(1000);
 	}
 	return 0;
 }
