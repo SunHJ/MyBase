@@ -45,6 +45,7 @@
     <OutDir>..\..\Bin</OutDir>
     <IntDir>..\..\Bin</IntDir>
     <LibraryPath>..\\..\\Lib\\Debug;$(LibraryPath)</LibraryPath>
+    <ExtensionsToDeleteOnClean>*.log;$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

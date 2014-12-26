@@ -29,9 +29,27 @@
     <ClInclude Include="Thread.h">
       <Filter>Synchronization</Filter>
     </ClInclude>
+    <ClInclude Include="CriticalSection.h">
+      <Filter>Synchronization</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>Synchronization</Filter>
+    </ClInclude>
+    <ClInclude Include="Semaphore.h">
+      <Filter>Synchronization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Thread.cpp">
+      <Filter>Synchronization</Filter>
+    </ClCompile>
+    <ClCompile Include="CriticalSection.cpp">
+      <Filter>Synchronization</Filter>
+    </ClCompile>
+    <ClCompile Include="Event.cpp">
+      <Filter>Synchronization</Filter>
+    </ClCompile>
+    <ClCompile Include="Semaphore.cpp">
       <Filter>Synchronization</Filter>
     </ClCompile>
   </ItemGroup>

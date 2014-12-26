@@ -2,16 +2,43 @@
 #include "Global.h"
 #include "Thread.h"
 
+#ifdef PLATFORM_OS_WINDOWS
+CONST DWORD INVALID_DW_VALUE = static_cast<DWORD>(-1);
+HANDLE Thread::GetHandle() CONST
+{
+	return m_hThread;
+}
+
+THREAD_FUNC_RET_TYPE __stdcall Thread::ThreadFunction(VOID *pValue)
+#else
+THREAD_FUNC_RET_TYPE Thread::ThreadFunction(VOID *pValue)
+#endif // WIN32
+{
+	UINT                 uReCode = 0;
+	THREAD_FUNC_RET_TYPE reValue = 0;
+	Thread* pThisThread = (Thread*)pValue;
+	if (NULL != pThisThread)
+	{
+		while (true)
+		{
+			pThisThread->PreRun();
+			uReCode = pThisThread->Run();
+		}
+	}
+	return reValue;
+}
+
 Thread::Thread()
 {
-#ifdef WIN32
-		m_hThread = NULL;
+	m_eFlag = eNone;
+	m_threadID = 0;
+
+#ifdef PLATFORM_OS_WINDOWS
+	m_hThread = NULL;
 #else
-        pthread_mutex_init(&mutex, NULL);
-        pthread_cond_init(&cond, NULL);
+	pthread_mutex_init(&mutex, NULL);
+    pthread_cond_init(&cond, NULL);
 #endif
-    m_eFlag = eNone;
-    m_threadID = 0;
 }
 
 Thread::~Thread()
@@ -19,53 +46,21 @@ Thread::~Thread()
 	Thread::Stop();
 }
 
-THREAD_ID Thread::GetThreadID() CONST
-{
-	return m_threadID;
-}
-
 BOOL Thread::Init()
 {
 	return TRUE;
 }
 
-#ifdef WIN32
-
-HANDLE Thread::GetHandle() CONST
-{
-	return m_hThread;
-}
-
-BOOL Thread::Wait(DWORD dwTimeOutMillis /* = 0 */) CONST
-{
-	CHECK_RETURN_BOOL_QUIET(m_threadID > 0);
-	CHECK_RETURN_BOOL_QUIET(m_hThread != INVALID_HANDLE_VALUE);
-	DWORD dwRetCode = ::WaitForSingleObject(m_hThread, dwTimeOutMillis);
-	return WAIT_OBJECT_0 == dwRetCode;
-}
-
-THREAD_FUNC_RET_TYPE __stdcall Thread::ThreadFunction(VOID *pValue)
-{
-    UINT                 uReCode     = 0;
-    THREAD_FUNC_RET_TYPE reValue     = 0;
-	Thread* pThisThread = (Thread*)pValue;
-    if (NULL != pThisThread)
-    {
-        while (true)
-        {
-            pThisThread->PreRun();
-            uReCode = pThisThread->Run();
-        }
-    }
-	return reValue;
-}
-
 BOOL Thread::Start()
 {
     BOOL bResult = FALSE;
-	if (m_threadID <= 0 || INVALID_HANDLE_VALUE == m_hThread)
+	if (m_threadID <= 0)
 	{
+#ifdef PLATFORM_OS_WINDOWS
 		m_hThread = (HANDLE)::_beginthreadex(0, 0, ThreadFunction, (VOID*)this, 0, &m_threadID);
+#else
+		::pthread_create(&m_threadID, NULL, ThreadFunction, (VOID*)this);
+#endif // PLATFORM_OS_WINDOWS
         if (m_hThread > 0)
         {
             m_eFlag = eActive;
@@ -75,127 +70,95 @@ BOOL Thread::Start()
 	return bResult;
 }
 
-VOID Thread:PreRun()
-{
-}
-
-BOOL Thread::Stop(DWORD dwExitCode /* = 0 */)
-{
-	CHECK_RETURN_BOOL_QUIET(m_threadID > 0);
-	CHECK_RETURN_BOOL_QUIET(m_hThread != INVALID_HANDLE_VALUE);
-	BOOL bRetCode = ::TerminateThread(m_hThread, dwExitCode);
-	if (bRetCode)
-	{
-		g_CloseHandle(m_hThread);
-		return TRUE;
-	}
-	return FALSE;
-}
-
-BOOL Thread::SuspendThread()
-{
-	CHECK_RETURN_BOOL_QUIET(m_threadID > 0);
-
-	CHECK_RETURN_BOOL_QUIET(m_hThread != INVALID_HANDLE_VALUE);
-	DWORD dwRetCode = ::SuspendThread(m_hThread);
-	if (static_cast<DWORD>(-1) == dwRetCode)
-	{
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-BOOL Thread::ResumeThread()
-{
-	CHECK_RETURN_BOOL_QUIET(m_threadID > 0);
-	CHECK_RETURN_BOOL_QUIET(m_hThread != INVALID_HANDLE_VALUE);
-	DWORD dwRetCode = ::ResumeThread(m_hThread);
-	if (static_cast<DWORD>(-1) == dwRetCode)
-	{
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-#else
-
-THREAD_FUNC_RET_TYPE Thread::ThreadFunction(VOID *pValue)
-{
-    UINT                 uReCode     = 0;
-    THREAD_FUNC_RET_TYPE reValue     = 0;
-	Thread* pThisThread = (Thread*)pValue;
-    if (NULL != pThisThread)
-    {
-        while (true)
-        {
-            pThisThread->PreRun();
-            uReCode = pThisThread->Run();
-        }
-    }
-	return reValue;
-}
-
-BOOL Thread::Start()
-{
-    BOOL bResult = FALSE;
-	if (m_threadID <= 0)
-	{
-		INT iRetCode = ::pthread_create(&m_threadID, NULL, ThreadFunction, (VOID*)this);
-        if (iRetCode == 0)
-        {
-            m_eFlag = eActive;
-            bResult = TRUE;
-        }
-	}
-	return bResult;
-}
-
 VOID Thread::PreRun()
-{
+{ 
+#ifdef PLATFORM_OS_WINDOWS
+
+#else 
     pthread_mutex_lock(&mutex);
     while(m_eFlag == eSuspend)
     {
-        pthread_cond_wait(&cond, &mutex);
+		//会先解除之前的pthread_mutex_lock锁定的mtx，然后阻塞在等待对列里休眠，直到再次被唤醒
+		//（大多数情况下是等待的条件成立而被唤醒，唤醒后，该进程会先锁定先pthread_mutex_lock(&mutex);，再读取资源
+        pthread_cond_wait(&cond, &mutex); 
     }
     pthread_mutex_unlock(&mutex);
+#endif // PLATFORM_OS_WINDOWS
 }
 
 BOOL Thread::Stop(DWORD dwExitCode /* = 0 */)
 {
-	CHECK_RETURN_BOOL_QUIET(m_threadID>0);
-	int iRetCode = ::pthread_cancel(m_threadID);
-	return (iRetCode == 0);
+	BOOL bResult = FALSE;
+	INT nRetCode = 0;
+	CHECK_RETURN_BOOL_QUIET(m_threadID > 0);
+
+#ifdef PLATFORM_OS_WINDOWS 
+	CHECK_RETURN_BOOL_QUIET(m_hThread != INVALID_HANDLE_VALUE);
+	nRetCode = ::TerminateThread(m_hThread, dwExitCode);
+	if (nRetCode)
+	{
+		g_CloseHandle(m_hThread);
+		m_eFlag = eNone;
+		bResult = TRUE;
+	}
+#else
+	nRetCode = ::pthread_cancel(m_threadID);
+	if (nRetCode == 0)
+	{	   
+		m_eFlag = eNone;
+		bResult = TRUE;
+	}
+#endif // PLATFORM_OS_WINDOWS
+	return bResult;
 }
 
 BOOL Thread::SuspendThread()
 {
+	BOOL bResult = FALSE;
 	CHECK_RETURN_BOOL_QUIET(m_threadID > 0);
-    BOOL bResult = FALSE;
-    pthread_mutex_lock(&mutex);
-    if (m_eFlag == eActive)
-    {
-        m_eFlag = eSuspend;
-        bResult = TRUE;
-    }
-    pthread_mutex_unlock(&mutex);
+	if (m_eFlag == eActive)
+	{
+#ifdef PLATFORM_OS_WINDOWS
+		CHECK_RETURN_BOOL_QUIET(m_hThread != INVALID_HANDLE_VALUE);
+		DWORD dwRetCode = ::SuspendThread(m_hThread);
+		if (INVALID_DW_VALUE != dwRetCode)
+		{
+			m_eFlag = eSuspend;
+			bResult = TRUE;
+		}
+#else  
+		pthread_mutex_lock(&mutex);
+		m_eFlag = eSuspend;
+		bResult = TRUE;
+		pthread_mutex_unlock(&mutex);
+
+#endif // PLATFORM_OS_WINDOWS
+	}
+
 	return bResult;
 }
 
 BOOL Thread::ResumeThread()
 {
+	BOOL bResult = FALSE;
 	CHECK_RETURN_BOOL_QUIET(m_threadID > 0);
-    BOOL bResult = FALSE;
-    pthread_mutex_lock(&mutex);
-    if (m_eFlag == eSuspend)
-    {
-        m_eFlag = eActive;
-        pthread_cond_signal(&cond);
-        bResult = TRUE;
-    }
-    pthread_mutex_unlock(&mutex);
+	if (m_eFlag == eSuspend)
+	{
+#ifdef PLATFORM_OS_WINDOWS
+		CHECK_RETURN_BOOL_QUIET(m_hThread != INVALID_HANDLE_VALUE);
+		DWORD dwRetCode = ::ResumeThread(m_hThread);
+		if (INVALID_DW_VALUE != dwRetCode)
+		{
+			m_eFlag = eActive;
+			bResult = TRUE;
+		}
+#else
+		pthread_mutex_lock(&mutex);
+		pthread_cond_signal(&cond);
+		m_eFlag = eActive;
+		bResult = TRUE;
+		pthread_mutex_unlock(&mutex);
+#endif // PLATFORM_OS_WINDOWS
+	}
 	return bResult;
 }
-
-#endif

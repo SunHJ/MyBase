@@ -4,13 +4,9 @@
 #include "Type.h"
 
 #ifdef WIN32
-	#include <process.h>
-	
 	typedef UINT THREAD_ID;
 	typedef UINT THREAD_FUNC_RET_TYPE;
 #else
-	#include <pthread.h>	
-	
 	typedef pthread_t THREAD_ID;
 	typedef VOID * THREAD_FUNC_RET_TYPE;
 #endif
@@ -24,18 +20,18 @@ typedef enum _ThreadStatus{
 class Thread : private UnCopyable
 {
 private:
+	emThreadStatus  m_eFlag;
+	THREAD_ID       m_threadID;
+
 #ifdef WIN32
 	HANDLE m_hThread;
 	HANDLE GetHandle() CONST;
-	BOOL Wait(DWORD dwTimeOutMillis = 0) CONST;
 	static THREAD_FUNC_RET_TYPE __stdcall ThreadFunction(VOID *);
 #else
     pthread_mutex_t mutex;
     pthread_cond_t cond;
 	static THREAD_FUNC_RET_TYPE ThreadFunction(VOID *);
 #endif
-    emThreadStatus  m_eFlag;
-	THREAD_ID       m_threadID;
 
 protected:
 	Thread();

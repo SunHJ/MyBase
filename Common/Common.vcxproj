@@ -43,6 +43,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\Bin</OutDir>
     <IntDir>..\Bin</IntDir>
+    <ExtensionsToDeleteOnClean>*.log;$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -84,14 +85,20 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="CriticalSection.h" />
+    <ClInclude Include="Event.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="Public.h" />
+    <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Thread.h" />
     <ClInclude Include="Type.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CriticalSection.cpp" />
+    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Thread.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
