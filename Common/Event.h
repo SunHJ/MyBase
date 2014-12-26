@@ -2,6 +2,7 @@
 #define __SYNCHRONIZATION_EVENT_H__
 
 #include "Type.h"
+#include "CriticalSection.h"
 
 #ifdef PLATFORM_OS_WINDOWS
     typedef HANDLE HANDLE_EVENT;

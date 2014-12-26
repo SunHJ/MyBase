@@ -30,10 +30,11 @@
     #include <string.h>
 	#include <unistd.h>	
 	#include <pthread.h>	
-    #define TRUE    1
-    #define FALSE   0
-    #define VOID    void
-    #define CONST   const
+    #define TRUE        1
+    #define FALSE       0
+    #define INFINITE    0xFFFFFFFF
+    #define VOID        void
+    #define CONST       const
 #endif // WIN32
 
 #endif	// __PUBLIC_PLATFORM_H__

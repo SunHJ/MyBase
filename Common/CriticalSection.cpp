@@ -14,7 +14,7 @@ CriticalSection::~CriticalSection()
 #ifdef PLATFORM_OS_WINDOWS
 	::DeleteCriticalSection(&m_cs);
 #else
-	::pthred_mutex_destory(&m_cs);
+	::pthread_mutex_destroy(&m_cs);
 #endif
 }
 

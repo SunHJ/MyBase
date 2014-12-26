@@ -9,7 +9,7 @@ inline VOID g_DestroyEvent(HANDLE_EVENT &hEvent)
 #ifdef WIN32
 	g_CloseHandle(hEvent);
 #else
-	::pthread_cond_destory(&hEvent->m_cond);
+	::pthread_cond_destroy(&hEvent->m_cond);
 	g_SafelyDeletePtr(hEvent);
 #endif // WIN32
 	}
@@ -39,6 +39,7 @@ Exit0:
 }
 
 #ifdef PLATFORM_OS_LINUX
+#include <sys/time.h>
 typedef struct timespec AbsTimeSpec;
 inline AbsTimeSpec& g_GetAbsTime(DWORD dwMilliseconds)
 {
@@ -85,11 +86,11 @@ inline BOOL g_WaitEvent(HANDLE_EVENT hEvent, DWORD dwMilliseconds /* = INFINITE 
 		Mutex &cs = hEvent->m_cs.GetCS();
 		if (INFINITE == dwMilliseconds)
 		{
-			nReCode = ::pthread_cond_wait(&hEvent->m_cond, &cs)
+			nReCode = ::pthread_cond_wait(&hEvent->m_cond, &cs);
 		}
 		else
 		{
-			nReCode = ::pthread_cond_timedwait(&hEvent->m_cond, &cs, &abstime)
+			nReCode = ::pthread_cond_timedwait(&hEvent->m_cond, &cs, &abstime);
 		}
 		CHECK_RETURN_BOOL_QUIET(0 == nReCode);
 
