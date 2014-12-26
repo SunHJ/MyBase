@@ -61,7 +61,7 @@ BOOL Thread::Start()
 #else
 		::pthread_create(&m_threadID, NULL, ThreadFunction, (VOID*)this);
 #endif // PLATFORM_OS_WINDOWS
-        if (m_hThread > 0)
+        if (m_threadID > 0)
         {
             m_eFlag = eActive;
             bResult = TRUE;
