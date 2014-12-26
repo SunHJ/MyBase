@@ -2,6 +2,7 @@
 
 MyThreadClass::MyThreadClass()
 {
+    m_nCount = 0;
 }
 
 MyThreadClass::~MyThreadClass()
@@ -10,13 +11,9 @@ MyThreadClass::~MyThreadClass()
 
 UINT MyThreadClass::Run()
 {
-	static UINT uCount = 0;
-	while (true)
-	{
-		uCount++;
-		printf("%d\n", uCount);
-		g_Sleep(1000);
-	}
+	m_nCount++;
+	printf("%d\n", m_nCount);
+	g_Sleep(1);
 	return 0;
 }
 
@@ -58,10 +55,13 @@ int Test_Thread()
 	{
 		//scanf("%c", &cType);
 		std::cin >> cType;
-		if (cType == 'q')
+        if (cType == 'q')
+        {
+            break;
+        }
+        else if (cType == 'd')
 		{
 			hThread.Stop();
-			break;
 		}
 		else if (cType == 's')
 		{

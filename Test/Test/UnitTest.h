@@ -9,7 +9,7 @@ public:
 	~MyThreadClass();
 
 private:
-
+    UINT         m_nCount;
 	virtual UINT Run();
 };
 

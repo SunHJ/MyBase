@@ -15,6 +15,12 @@
 	typedef VOID * THREAD_FUNC_RET_TYPE;
 #endif
 
+typedef enum _ThreadStatus{
+    eNone,
+    eActive,
+    eSuspend
+}emThreadStatus;
+
 class Thread : private UnCopyable
 {
 private:
@@ -24,9 +30,12 @@ private:
 	BOOL Wait(DWORD dwTimeOutMillis = 0) CONST;
 	static THREAD_FUNC_RET_TYPE __stdcall ThreadFunction(VOID *);
 #else
-	static THREAD_FUNC_RET_TYPE *ThreadFunction(VOID *);
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+	static THREAD_FUNC_RET_TYPE ThreadFunction(VOID *);
 #endif
-	THREAD_ID m_threadID;
+    emThreadStatus  m_eFlag;
+	THREAD_ID       m_threadID;
 
 protected:
 	Thread();
@@ -42,6 +51,7 @@ public:
 	virtual BOOL ResumeThread();
 
 private:
+    virtual VOID PreRun();
 	virtual UINT Run() = 0;
 };
 

@@ -6,10 +6,12 @@ Thread::Thread()
 {
 #ifdef WIN32
 		m_hThread = NULL;
-		m_threadID = 0;
 #else
-		m_threadID = 0;
+        pthread_mutex_init(&mutex, NULL);
+        pthread_cond_init(&cond, NULL);
 #endif
+    m_eFlag = eNone;
+    m_threadID = 0;
 }
 
 Thread::~Thread()
@@ -44,17 +46,37 @@ BOOL Thread::Wait(DWORD dwTimeOutMillis /* = 0 */) CONST
 
 THREAD_FUNC_RET_TYPE __stdcall Thread::ThreadFunction(VOID *pValue)
 {
+    UINT                 uReCode     = 0;
+    THREAD_FUNC_RET_TYPE reValue     = 0;
 	Thread* pThisThread = (Thread*)pValue;
-	return (THREAD_FUNC_RET_TYPE)(pThisThread ? pThisThread->Run() : 0);
+    if (NULL != pThisThread)
+    {
+        while (true)
+        {
+            pThisThread->PreRun();
+            uReCode = pThisThread->Run();
+        }
+    }
+	return reValue;
 }
 
 BOOL Thread::Start()
 {
+    BOOL bResult = FALSE;
 	if (m_threadID <= 0 || INVALID_HANDLE_VALUE == m_hThread)
 	{
 		m_hThread = (HANDLE)::_beginthreadex(0, 0, ThreadFunction, (VOID*)this, 0, &m_threadID);
+        if (m_hThread > 0)
+        {
+            m_eFlag = eActive;
+            bResult = TRUE;
+        }
 	}
-	return (m_threadID > 0);
+	return bResult;
+}
+
+VOID Thread:PreRun()
+{
 }
 
 BOOL Thread::Stop(DWORD dwExitCode /* = 0 */)
@@ -101,19 +123,43 @@ BOOL Thread::ResumeThread()
 
 THREAD_FUNC_RET_TYPE Thread::ThreadFunction(VOID *pValue)
 {
+    UINT                 uReCode     = 0;
+    THREAD_FUNC_RET_TYPE reValue     = 0;
 	Thread* pThisThread = (Thread*)pValue;
-	return (THREAD_FUNC_RET_TYPE)(pThisThread ? pThisThread->Run() : 0);
+    if (NULL != pThisThread)
+    {
+        while (true)
+        {
+            pThisThread->PreRun();
+            uReCode = pThisThread->Run();
+        }
+    }
+	return reValue;
 }
 
 BOOL Thread::Start()
 {
-	int iRetCode = 0;
+    BOOL bResult = FALSE;
 	if (m_threadID <= 0)
 	{
-		iRetCode = ::pthread_create(&m_threadID, NULL, ThreadFunction, (VOID*)this);
+		INT iRetCode = ::pthread_create(&m_threadID, NULL, ThreadFunction, (VOID*)this);
+        if (iRetCode == 0)
+        {
+            m_eFlag = eActive;
+            bResult = TRUE;
+        }
 	}
-	return (iRetCode == 0);
+	return bResult;
+}
 
+VOID Thread::PreRun()
+{
+    pthread_mutex_lock(&mutex);
+    while(m_eFlag == eSuspend)
+    {
+        pthread_cond_wait(&cond, &mutex);
+    }
+    pthread_mutex_unlock(&mutex);
 }
 
 BOOL Thread::Stop(DWORD dwExitCode /* = 0 */)
@@ -126,14 +172,30 @@ BOOL Thread::Stop(DWORD dwExitCode /* = 0 */)
 BOOL Thread::SuspendThread()
 {
 	CHECK_RETURN_BOOL_QUIET(m_threadID > 0);
-
-	return TRUE;
+    BOOL bResult = FALSE;
+    pthread_mutex_lock(&mutex);
+    if (m_eFlag == eActive)
+    {
+        m_eFlag = eSuspend;
+        bResult = TRUE;
+    }
+    pthread_mutex_unlock(&mutex);
+	return bResult;
 }
 
 BOOL Thread::ResumeThread()
 {
 	CHECK_RETURN_BOOL_QUIET(m_threadID > 0);
-
-	return TRUE;
+    BOOL bResult = FALSE;
+    pthread_mutex_lock(&mutex);
+    if (m_eFlag == eSuspend)
+    {
+        m_eFlag = eActive;
+        pthread_cond_signal(&cond);
+        bResult = TRUE;
+    }
+    pthread_mutex_unlock(&mutex);
+	return bResult;
 }
+
 #endif

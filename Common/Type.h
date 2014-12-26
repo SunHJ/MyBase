@@ -24,7 +24,7 @@ size_t              4                   8                   4                   
     typedef unsigned char           BYTE;       // 1bytes
     typedef unsigned short          WORD;       // 2bytes
     typedef unsigned int            DWORD;      // 4bytes
-    typedef long					LONG;       // 4bytes
+    typedef int 					LONG;       // 4bytes
     typedef signed   long long		INT64;      // 8bytes
     typedef unsigned long long		UINT64;     // 8bytes
     typedef unsigned int			ULONG_PTR;  // 4bytes
