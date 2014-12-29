@@ -87,17 +87,25 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClInclude Include="Common.h" />
     <ClInclude Include="CriticalSection.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="File.h" />
+    <ClInclude Include="FileWraper.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="Public.h" />
+    <ClInclude Include="RefCounter.h" />
+    <ClInclude Include="ScopedArrayPtr.h" />
+    <ClInclude Include="ScopedPtr.h" />
     <ClInclude Include="Semaphore.h" />
+    <ClInclude Include="SharedArrayPtr.h" />
+    <ClInclude Include="SharedPtr.h" />
     <ClInclude Include="Thread.h" />
     <ClInclude Include="Type.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CriticalSection.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="File.cpp" />
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Thread.cpp" />
   </ItemGroup>

@@ -5,5 +5,7 @@
 #include "Macro.h"
 #include "Global.h"
 #include "Thread.h"
+#include "SharedPtr.h"
+#include "File.h"
 
 #endif //__INCLUDE_COMMON_H__

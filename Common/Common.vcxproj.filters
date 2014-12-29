@@ -10,6 +10,9 @@
     <Filter Include="Synchronization">
       <UniqueIdentifier>{8f39f42c-2f57-46a2-8cf5-1a483ada1d81}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pointer">
+      <UniqueIdentifier>{9904eba1-bbbc-4604-8c0f-07fdf9b3e8c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public.h" />
@@ -38,6 +41,27 @@
     <ClInclude Include="Semaphore.h">
       <Filter>Synchronization</Filter>
     </ClInclude>
+    <ClInclude Include="RefCounter.h">
+      <Filter>Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="ScopedArrayPtr.h">
+      <Filter>Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="ScopedPtr.h">
+      <Filter>Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedArrayPtr.h">
+      <Filter>Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedPtr.h">
+      <Filter>Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="File.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="FileWraper.h">
+      <Filter>File</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Thread.cpp">
@@ -51,6 +75,9 @@
     </ClCompile>
     <ClCompile Include="Semaphore.cpp">
       <Filter>Synchronization</Filter>
+    </ClCompile>
+    <ClCompile Include="File.cpp">
+      <Filter>File</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

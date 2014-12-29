@@ -1,12 +1,19 @@
 #include "UnitTest.h"
 
+#include <crtdbg.h>
+
 int main(int argc, char* argv[])
 {
-// 	Test_PlatFormInfo();
-// 	Test_Macro();
-// 	Test_Interlocked();
-// 	Test_GlobalFun();
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	Test_Thread();
+//  	Test_PlatFormInfo();
+//  	Test_Macro();
+//  	Test_Interlocked();
+//  	Test_GlobalFun();
+// 
+// 	Test_Thread();
+	Test_File();
+
+	Test_Pointer();
 	return 0;
 }

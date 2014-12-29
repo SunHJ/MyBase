@@ -66,17 +66,35 @@ inline VOID g_ZeroMemory(T *p, size_t nMemSize)
 }
 
 template <class T>
+inline VOID g_DeletePtr(T *&p)
+{
+	if (NULL != p)
+	{
+		delete p; p = NULL;
+	}
+}
+
+template <class T>
 inline VOID g_SafelyDeletePtr(T *&p)
 {
 	// check if type is complete
 	typedef CHAR TypeMustBeComplete[sizeof(T) ? 1 : -1];
 	(VOID)sizeof(TypeMustBeComplete);
 
+	g_DeletePtr(p);
+}
+
+
+
+template <class T>
+inline VOID g_DeleteArrayPtr(T *&p)
+{
 	if (NULL != p)
 	{
-		delete p; p = NULL;
+		delete[] p; p = NULL;
 	}
 }
+
 
 template <class T>
 inline VOID g_SafelyDeleteArrayPtr(T *&p)
@@ -85,32 +103,45 @@ inline VOID g_SafelyDeleteArrayPtr(T *&p)
 	typedef CHAR TypeMustBeComplete[sizeof(T) ? 1 : -1];
 	(VOID)sizeof(TypeMustBeComplete);
 
+	g_DeleteArrayPtr(p);
+}
+
+template <class T>
+inline VOID g_DeleteConstPtr(T *CONST p)
+{
 	if (NULL != p)
 	{
-		delete[] p; p = NULL;
+		delete p;
 	}
 }
 
 template <class T>
-inline VOID g_SafelyDeleteCONSTPtr(T *CONST p)
+inline VOID g_SafelyDeleteConstPtr(T *CONST p)
 {
 	// check if type is complete
 	typedef CHAR TypeMustBeComplete[sizeof(T) ? 1 : -1];
 	(VOID)sizeof(TypeMustBeComplete);
 
-	if (NULL != p)
-		delete p;
+	g_DeleteConstPtr(p);
 }
 
 template <class T>
-inline VOID g_SafelyDeleteCONSTArrayPtr(T *CONST p)
+inline VOID g_DeleteConstArrayPtr(T *CONST p)
+{
+	if (NULL != p)
+	{
+		delete[] p;
+	}
+}
+
+template <class T>
+inline VOID g_SafelyDeleteConstArrayPtr(T *CONST p)
 {
 	// check if type is complete 
 	typedef CHAR TypeMustBeComplete[sizeof(T) ? 1 : -1];
 	(VOID)sizeof(TypeMustBeComplete);
 
-	if (NULL != p)
-		delete[] p;
+	g_DeleteConstArrayPtr(p);
 }
 
 
@@ -135,7 +166,7 @@ inline VOID g_FreeMemeoy(T *&p)
 }
 
 template <class T>
-inline VOID g_FreeCONSTPtr(T *CONST p)
+inline VOID g_FreeConstPtr(T *CONST p)
 {
 	if (NULL != p)
 		::free(p);
@@ -360,7 +391,7 @@ inline VOID g_CloseHandle(HANDLE &handle)
 	}
 }   
 
-inline LONG g_InterlockedIncrement(LONG *plValue)
+inline LONG g_AtomicIncrement(LONG *plValue)
 {
 #ifdef _MT
 	return ::InterlockedIncrement(plValue);
@@ -369,7 +400,7 @@ inline LONG g_InterlockedIncrement(LONG *plValue)
 #endif
 }
 
-inline LONG g_InterlockedDecrement(LONG *plValue)
+inline LONG g_AtomicDecrement(LONG *plValue)
 {
 #ifdef _MT
 	return ::InterlockedDecrement(plValue);
@@ -378,7 +409,7 @@ inline LONG g_InterlockedDecrement(LONG *plValue)
 #endif
 }
 
-inline LONG g_InterlockedExchange(volatile LONG *pTarget, LONG lValue)
+inline LONG g_AtomicExchange(volatile LONG *pTarget, LONG lValue)
 {
 #ifdef _MT
 	return ::InterlockedExchange(pTarget, lValue);
@@ -389,7 +420,7 @@ inline LONG g_InterlockedExchange(volatile LONG *pTarget, LONG lValue)
 #endif
 }
 
-inline LONG g_InterlockedExchangeAdd(LONG *plValue, LONG lAddValue)
+inline LONG g_AtomicExchangeAdd(LONG *plValue, LONG lAddValue)
 {
 #ifdef _MT
 	return ::InterlockedExchangeAdd(plValue, lAddValue);
@@ -402,7 +433,7 @@ inline LONG g_InterlockedExchangeAdd(LONG *plValue, LONG lAddValue)
 
 #else
 
-inline LONG g_InterlockedIncrement(LONG *plValue)
+inline LONG g_AtomicIncrement(LONG *plValue)
 {
 	LONG lResult;
 	__asm__ __volatile__
@@ -420,7 +451,7 @@ inline LONG g_InterlockedIncrement(LONG *plValue)
 	return lResult;
 }
 
-inline LONG g_InterlockedDecrement(LONG *plValue)
+inline LONG g_AtomicDecrement(LONG *plValue)
 {
 	LONG lResult;
 	__asm__ __volatile__
@@ -438,7 +469,7 @@ inline LONG g_InterlockedDecrement(LONG *plValue)
 	return lResult;
 }
 
-inline LONG g_InterlockedExchange(volatile LONG *pTarget, LONG lValue)
+inline LONG g_AtomicExchange(volatile LONG *pTarget, LONG lValue)
 {
 	__asm__ __volatile__
 	(
@@ -453,7 +484,7 @@ inline LONG g_InterlockedExchange(volatile LONG *pTarget, LONG lValue)
 	return lValue;
 }
 
-inline LONG g_InterlockedExchangeAdd(LONG *plValue, LONG lAddValue)
+inline LONG g_AtomicExchangeAdd(LONG *plValue, LONG lAddValue)
 {
 	LONG lResult;
 	__asm__ __volatile__

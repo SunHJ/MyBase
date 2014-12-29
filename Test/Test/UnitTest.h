@@ -23,5 +23,8 @@ extern void Test_Interlocked();
 
 extern int Test_Thread();
 
+extern void Test_File();
+
+extern void Test_Pointer();
 
 #endif

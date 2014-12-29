@@ -41,7 +41,7 @@ void Test_Interlocked()
 	LONG lValue = 0;
 	for (int i = 0; i < 10; i++)
 	{
-		lValue = g_InterlockedIncrement(&lValue);
+		lValue = g_AtomicIncrement(&lValue);
 		printf("%d\n", lValue);
 	}
 }
@@ -78,4 +78,45 @@ int Test_Thread()
 
 	}
 	return 0;
+}
+
+inline void Test_Pointer()
+{
+	struct MyStruct
+	{
+		int a;
+		int b;
+		int c;
+	};
+	MyStruct* pStruct = new MyStruct();
+	SharedPtr<MyStruct> spStruct = SharedPtr<MyStruct>(pStruct);
+	spStruct->a = 0;
+	spStruct->b = 1;
+	spStruct->c = 2;
+}
+
+inline void Test_File()
+{
+	File objFile;
+	objFile.Open("test.txt", "w+");
+	LONG lSize = objFile.Size();
+	printf("Size = %d\n", lSize);
+	LONG lPos = objFile.Tell();
+	printf("CurPos = %d", lPos);
+	objFile.Write("123456\n", 7, 7);
+	lPos = objFile.Tell();
+	printf("CurPos = %d\n", lPos);
+	objFile.WriteTextLine("abcdefghijklmnopqrstuvwxyz", 26);
+	objFile.WriteTextLine("abcdefghijklmnopqrs", 26);
+	lPos = objFile.Tell();
+	printf("CurPos = %d\n", lPos);
+
+	BOOL bReCode = 0;
+	CHAR szBuffer[256];
+	LONG lReCode = 0;
+	bReCode = objFile.SeekBegin(0);
+	lReCode = objFile.ReadTextLine(szBuffer, 255);
+	printf("ReadTextLine Result: %d %s", lReCode, szBuffer);
+	lReCode = objFile.Read(szBuffer, 255, 10);
+	printf("Read Result: %d %s", lReCode, szBuffer);
 }
