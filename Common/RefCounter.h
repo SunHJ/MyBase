@@ -101,7 +101,7 @@ public:
 public:
 	virtual PVOID GetDeleter()
 	{
-		return static_cast<PVOID>(m_deteler);
+		return PVOID(m_deteler);
 	}
 
 private:
@@ -142,7 +142,7 @@ public:
 	template <class D>
 	explicit StrongCounter(std::auto_ptr<D> &autoPtr)
 	{
-		m_pCounter = ::new BRefCounter<T>(autoPtr.get());
+		m_pCounter = ::new BRefCounter<D>(autoPtr.get());
 		ASSERT(NULL != m_pCounter);
 		autoPtr.release();
 	}

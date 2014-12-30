@@ -208,14 +208,14 @@ inline BOOL g_DeleteFile(CONST STRING &strDirPath)
 inline BOOL g_DeleteDir(CONST STRING &strDirPath)
 {
 	CHECK_RETURN_BOOL(strDirPath.size()>0 && strDirPath[0] != '\0');
-
+    BOOL bRetCode = FALSE;
 	STRING strBasePath = strDirPath;
 	g_FormatDirPath(strBasePath);
 
 	if (!g_IsDirExisted(strBasePath.c_str()))
 		return TRUE;
 	STRING strFindPath = strBasePath + "*";
-
+#ifdef PLATFORM_OS_WINDOWS
 	WIN32_FIND_DATA FindData;
 	HANDLE hFindFile = ::FindFirstFile(strFindPath.c_str(), &FindData);
 	CHECK_RETURN_BOOL(INVALID_HANDLE_VALUE != hFindFile);
@@ -237,8 +237,10 @@ inline BOOL g_DeleteDir(CONST STRING &strDirPath)
 		bIsFind = ::FindNextFile(hFindFile, &FindData);
 	}
 
-	BOOL bRetCode = ::RemoveDirectory(strBasePath.c_str());
+	bRetCode = ::RemoveDirectory(strBasePath.c_str());
 	::FindClose(hFindFile);
+#else
+#endif //PLATFORM_OS_WINDOWS
 
 	return bRetCode;
 }
@@ -255,10 +257,19 @@ inline BOOL g_CreateDir(CONST STRING &strDirPath)
 	STRING strToCheckPath  = strRealFilePath.substr(i + 1, strRealFilePath.size() - i);
 
 	BOOL bLoopFlag = TRUE;
+    INT nRetCode = 0;
 	while(bLoopFlag) {
 		if (!g_IsDirExisted(strCheckingPath.c_str()))
-			CHECK_RETURN_BOOL(::CreateDirectory(strCheckingPath.c_str(), NULL));
+        {
 
+#ifdef PLATFORM_OS_WINDOWS
+            nRetCode = ::CreateDirectory(strCheckingPath.c_str(), NULL);
+			CHECK_RETURN_BOOL(nRetCode);
+#else
+            nRetCode = ::mkdir(strCheckingPath.c_str(), 0755);
+            CHECK_RETURN_BOOL(nRetCode >= 0);
+#endif
+        }
 		if (!strToCheckPath.size()) break;
 
 		STRING::size_type j = strToCheckPath.find_first_of("/\\");

@@ -80,7 +80,7 @@ int Test_Thread()
 	return 0;
 }
 
-inline void Test_Pointer()
+void Test_Pointer()
 {
 	struct MyStruct
 	{
@@ -95,7 +95,7 @@ inline void Test_Pointer()
 	spStruct->c = 2;
 }
 
-inline void Test_File()
+void Test_File()
 {
 	File objFile;
 	objFile.Open("test.txt", "w+");
@@ -118,5 +118,6 @@ inline void Test_File()
 	lReCode = objFile.ReadTextLine(szBuffer, 255);
 	printf("ReadTextLine Result: %d %s", lReCode, szBuffer);
 	lReCode = objFile.Read(szBuffer, 255, 10);
-	printf("Read Result: %d %s", lReCode, szBuffer);
+    szBuffer[10] = '\0';
+	printf("Read Result: %d %s\n", lReCode, szBuffer);
 }

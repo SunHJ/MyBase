@@ -11,7 +11,7 @@ $(shell mkdir -p $(lib_dir))
 $(shell mkdir -p $(bin_dir))
 $(shell mkdir -p $(obj_dir))
 
-obj=Thread.o CriticalSection.o Event.o
+obj=Thread.o CriticalSection.o Event.o File.o
 tag=libcommon.a
 
 
@@ -32,6 +32,9 @@ Event.o:Event.cpp
 #Linux平台目前还没有实现
 #Semaphore.o:Semaphore.cpp
 #	$(CC) -c Semaphore.cpp
+
+File.o:File.cpp
+	$(CC) -c File.cpp
 
 #$(shell cp $(obj) $(obj_dir))
 #$(shell cp $(tag) $(lib_dir))

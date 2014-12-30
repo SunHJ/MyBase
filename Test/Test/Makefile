@@ -6,7 +6,7 @@ RM=rm -rf
 CC=g++
 #AR=ar rc
 
-I_COMMON=-I../../Common/
+I_COMMON=-I../../Common/ -std=c++11
 L_COMMON=-lcommon -L $(lib_dir)
 #创建目录
 #$(shell mkdir -p $(lib_dir))

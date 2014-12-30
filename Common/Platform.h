@@ -27,6 +27,7 @@
 	#include <process.h>
 	#undef WIN32_LEAN_AND_MEAN
 #else
+    #include <sys/stat.h>
     #include <string.h>
 	#include <unistd.h>	
 	#include <pthread.h>	
