@@ -17,6 +17,8 @@
 #include <assert.h>
 #include <ctype.h>	
 #include <string>	
+#include <map>	  
+#include <list>
 #include <vector>
 #include <algorithm>
 

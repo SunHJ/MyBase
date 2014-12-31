@@ -6,9 +6,6 @@
 #include "CriticalSection.h"
 #include "Semaphore.h"
 
-#include <list>
-#include <map>
-
 template <class T>
 class UniversalQueue : private UnCopyable
 {
