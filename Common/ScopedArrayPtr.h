@@ -4,17 +4,17 @@
 #include "Global.h"
 
 template <class T>
-class BScopedArrayPtr : private UnCopyable
+class ScopedArrayPtr : private UnCopyable
 {
 private:
 	T *m_ptr;
 
 public:
-	BScopedArrayPtr(T *ptr = NULL) : m_ptr(ptr)
+	ScopedArrayPtr(T *ptr = NULL) : m_ptr(ptr)
 	{
 	}
 
-	~BScopedArrayPtr()
+	~ScopedArrayPtr()
 	{
 		g_SafelyDeleteArrayPtr(m_ptr);
 	}
@@ -28,7 +28,7 @@ public:
 	VOID ResetPtr(T *ptr = NULL)
 	{
 		if (m_ptr != ptr)
-			BScopedArrayPtr<T>(ptr).Swap(*this);
+			ScopedArrayPtr<T>(ptr).Swap(*this);
 	}
 
 	T &operator[](CONST UINT pos) CONST
@@ -48,10 +48,10 @@ public:
 	}
 
 private:
-	bool operator== (CONST BScopedArrayPtr &);
-	bool operator!= (CONST BScopedArrayPtr &);
+	bool operator== (CONST ScopedArrayPtr &);
+	bool operator!= (CONST ScopedArrayPtr &);
 
-	VOID Swap(BScopedArrayPtr &r)
+	VOID Swap(ScopedArrayPtr &r)
 	{
 		g_Swap(m_ptr, r.m_ptr);
 	}

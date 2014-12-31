@@ -14,6 +14,8 @@ CONST int MAX_DIR_NAME_LEN	= 256;                // Include '\0' character
 CONST int MAX_IP_ADDR_LEN = 16;                     // Include '\0' character
 CONST DWORD INVALID_ID_VALUE = static_cast<DWORD>(-1); // Invalid number id of a string
 
+CONST size_t DEFAULT_MAX_BUFFER_LEN = 8;
+
 /*---------------------------------- GLOBAL FUNCTION DEFINE ---------------------------------*/
 template <class T>
 inline T g_Max(CONST T &lhs,CONST T &rhs)
@@ -500,6 +502,26 @@ inline LONG g_AtomicExchangeAdd(LONG *plValue, LONG lAddValue)
 	return lResult;
 }
 
+typedef struct timespec AbsTimeSpec;
+inline AbsTimeSpec& g_GetAbsTime(DWORD dwMilliseconds)
+{
+	ASSERT(INFINITE != dwMilliseconds);
+	static AbsTimeSpec abstime;
+	struct timeval tv;
+	::memset(&abstime, 0, sizeof(AbsTimeSpec));
+	::memset(&tv, 0, sizeof(struct timeval));
+
+	::gettimeofday(&tv, NULL);
+	abstime.tv_sec = tv.tv_sec + dwMilliseconds / 1000;
+	abstime.tv_nsec = tv.tv_usec * 100 + (dwMilliseconds % 1000) * 1000000;
+
+	if (abstime.tv_nsec >= 1000000000)
+	{
+		abstime.tv_nsec -= 1000000000;
+		abstime.tv_sec++;
+	}
+	return abstime;
+}
 #endif  // WIN32
 
 #endif	//__PUBLIC_GLOBAL_H__

@@ -121,3 +121,19 @@ void Test_File()
     szBuffer[10] = '\0';
 	printf("Read Result: %d %s\n", lReCode, szBuffer);
 }
+
+void Test_Buffer()
+{
+	SPDynamicBuffer spBuffer(new DynamicBuffer());
+	printf("BufferInfo Size:%d UsedSize:%d LeftSize:%d\n",
+		spBuffer->GetTotalSize(), spBuffer->GetUsedSize(), spBuffer->GetLeftSize());
+
+	CHAR szBuffer[] = "asahjkdhasjkdhajkshdjkalshd\0";
+	spBuffer->InsertDataIntoHead(szBuffer, strlen(szBuffer));					
+	printf("BufferInfo Size:%d UsedSize:%d LeftSize:%d\n",
+		spBuffer->GetTotalSize(), spBuffer->GetUsedSize(), spBuffer->GetLeftSize());
+
+	PVOID pBuffer = spBuffer->GetDataPtr(10);
+	PCHAR pString = static_cast<PCHAR>(pBuffer);
+	printf("%s\n", pString);
+}

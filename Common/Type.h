@@ -88,4 +88,18 @@ protected:
 	~UnConstructable() {}
 };
 
+template <class T>
+class Singleton : private UnConstructable
+{
+public:
+	static T& GetInstance() {
+		static T l_sInstance;
+		return l_sInstance;
+	}
+};
+
+#define DECLARE_SINGLETON_PATTERN(T) friend class Singleton<T>
+#define SINGLETON_GET_REF(T)         (Singleton<T>::GetInstance())
+#define SINGLETON_GET_PTR(T)         (&Singleton<T>::GetInstance())
+
 #endif //__PUBLIC_TYPE_H__

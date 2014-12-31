@@ -71,30 +71,30 @@ public:
 };
 
 template <class T>
-class BRefCounter : public RefCounterBase
+class RefCounter : public RefCounterBase
 {
 private:
 	typedef VOID (*Dtr)(T *&p);
-	typedef BRefCounter<T> this_type;
+	typedef RefCounter<T> this_type;
 
 private:
 	T *m_ptr;       // ptr to the real res
 	Dtr m_deteler;  // deleter
 
 public:
-	BRefCounter() : m_ptr(NULL), m_deteler(g_SafelyDeletePtr<T>)
+	RefCounter() : m_ptr(NULL), m_deteler(g_SafelyDeletePtr<T>)
 	{
 	}
 
-	explicit BRefCounter(T *ptr) : m_ptr(ptr), m_deteler(g_SafelyDeletePtr<T>)
+	explicit RefCounter(T *ptr) : m_ptr(ptr), m_deteler(g_SafelyDeletePtr<T>)
 	{
 	}
 
-	BRefCounter(T *ptr, Dtr dtr) : m_ptr(ptr), m_deteler(dtr)
+	RefCounter(T *ptr, Dtr dtr) : m_ptr(ptr), m_deteler(dtr)
 	{
 	}
 
-	virtual ~BRefCounter()
+	virtual ~RefCounter()
 	{
 	}
 
@@ -128,21 +128,21 @@ public:
 	template <class D>
 	explicit StrongCounter(D *ptr) : m_pCounter(NULL)
 	{
-		m_pCounter = ::new BRefCounter<D>(ptr);
+		m_pCounter = ::new RefCounter<D>(ptr);
 		ASSERT(NULL != m_pCounter);
 	}
 
 	template <class D, class Dtr>
 	StrongCounter(D *ptr, Dtr dtr) : m_pCounter(NULL)
 	{
-		m_pCounter = ::new BRefCounter<D>(ptr, dtr);
+		m_pCounter = ::new RefCounter<D>(ptr, dtr);
 		ASSERT(NULL != m_pCounter);
 	}
 
 	template <class D>
 	explicit StrongCounter(std::auto_ptr<D> &autoPtr)
 	{
-		m_pCounter = ::new BRefCounter<D>(autoPtr.get());
+		m_pCounter = ::new RefCounter<D>(autoPtr.get());
 		ASSERT(NULL != m_pCounter);
 		autoPtr.release();
 	}

@@ -38,32 +38,6 @@ Exit0:
 	return NULL;
 }
 
-#ifdef PLATFORM_OS_LINUX
-#include <sys/time.h>
-typedef struct timespec AbsTimeSpec;
-inline AbsTimeSpec& g_GetAbsTime(DWORD dwMilliseconds)
-{
-	ASSERT(INFINITE != dwMilliseconds);
-	static AbsTimeSpec abstime;
-	struct timeval tv;
-	::memset(&abstime, 0, sizeof(AbsTimeSpec));
-	::memset(&tv, 0, sizeof(struct timeval));
-
-	::gettimeofday(&tv, NULL);
-	abstime.tv_sec = tv.tv_sec + dwMilliseconds / 1000;
-	abstime.tv_nsec = tv.tv_usec * 100 + (dwMilliseconds % 1000) * 1000000;
-
-	if (abstime.tv_nsec >= 1000000000)
-	{
-		abstime.tv_nsec -= 1000000000;
-		abstime.tv_sec++;
-	}
-	return abstime;
-}
-
-#endif // PLATFORM_OS_LINUX
-
-
 inline BOOL g_WaitEvent(HANDLE_EVENT hEvent, DWORD dwMilliseconds /* = INFINITE */)
 {
 #ifdef PLATFORM_OS_WINDOWS

@@ -27,4 +27,6 @@ extern void Test_File();
 
 extern void Test_Pointer();
 
+extern void Test_Buffer();
+
 #endif

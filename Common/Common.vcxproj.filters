@@ -13,6 +13,9 @@
     <Filter Include="Pointer">
       <UniqueIdentifier>{9904eba1-bbbc-4604-8c0f-07fdf9b3e8c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Structure">
+      <UniqueIdentifier>{3a23e7a3-0456-49c0-9e0a-c5f5f686709a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public.h" />
@@ -62,6 +65,15 @@
     <ClInclude Include="FileWraper.h">
       <Filter>File</Filter>
     </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Structure</Filter>
+    </ClInclude>
+    <ClInclude Include="LinkedList.h">
+      <Filter>Structure</Filter>
+    </ClInclude>
+    <ClInclude Include="UniversalQueue.h">
+      <Filter>Structure</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Thread.cpp">
@@ -78,6 +90,9 @@
     </ClCompile>
     <ClCompile Include="File.cpp">
       <Filter>File</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer.cpp">
+      <Filter>Structure</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

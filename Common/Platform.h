@@ -27,11 +27,13 @@
 	#include <process.h>
 	#undef WIN32_LEAN_AND_MEAN
 #else
-    #include <sys/stat.h>
     #include <string.h>
 	#include <unistd.h>	
-	#include <pthread.h>	
-    #define TRUE        1
+	#include <pthread.h>
+	#include <sys/time.h>	
+	#include <sys/stat.h>
+    
+	#define TRUE        1
     #define FALSE       0
     #define INFINITE    0xFFFFFFFF
     #define VOID        void

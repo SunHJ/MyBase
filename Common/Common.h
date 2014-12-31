@@ -7,5 +7,6 @@
 #include "Thread.h"
 #include "SharedPtr.h"
 #include "File.h"
+#include "Buffer.h"
 
 #endif //__INCLUDE_COMMON_H__
