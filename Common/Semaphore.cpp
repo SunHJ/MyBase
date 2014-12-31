@@ -57,7 +57,7 @@ BOOL Semaphore::WaitSemaphore(DWORD dwMilliseconds /* = INFINITE */)
 	else
 	{
 		AbsTimeSpec abstime = g_GetAbsTime(dwMilliseconds);
-		nReCode = ::sem_timedwait(&m_Sem£¬ &abstime);
+		nReCode = ::sem_timedwait(&m_Sem, &abstime);
 	}
 	return (0 == nReCode);
 #endif // PLATFORM_OS_WINDOWS

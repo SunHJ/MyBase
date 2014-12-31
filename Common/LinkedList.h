@@ -98,14 +98,14 @@ public:
 
 	PLinkedNode GetNextNodePtr(CONST INT nIdx) CONST
 	{
-		INT nIdx = GetNextNodeIdx(nIdx);
-		return GetNodePtr(nIdx);
+		INT nNodeId = GetNextNodeIdx(nIdx);
+		return GetNodePtr(nNodeId);
 	}
 
 	PLinkedNode GetPrevNodePtr(CONST INT nIdx) CONST
 	{
-		INT nIdx = GetPrevNodeIdx(nIdx);
-		return GetNodePtr(nIdx);
+		INT nNodeId = GetPrevNodeIdx(nIdx);
+		return GetNodePtr(nNodeId);
 	}
 
 	BOOL InsertNode(CONST INT nIdx, CONST T &tValue)

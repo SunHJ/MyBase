@@ -84,10 +84,10 @@ class UniversalQueueManagement : private UnCopyable
     DECLARE_SINGLETON_PATTERN( UniversalQueueManagement );
 
 private:
-    typedef UniversalQueue<T>                 UniversalQueue;
-    typedef UniversalQueue *                  PUniversalQueue;
+    typedef UniversalQueue<T>               UnQueueInstance;
+    typedef UnQueueInstance *               PUniversalQueue;
 	//构造通用队列智能指针
-    typedef SharedPtr<UniversalQueue>        SPUniversalQueue;
+    typedef SharedPtr<UnQueueInstance>      SPUniversalQueue;
 
     typedef std::map<DWORD, SPUniversalQueue> UniversalQueueMap;
 
@@ -110,13 +110,13 @@ public:
     {
         BOOL bRetCode = FALSE;
 
-        UniversalQueueMap::iterator iter = m_universalQueueMap.find(dwQueueID);
+        typename UniversalQueueMap::iterator iter = m_universalQueueMap.find(dwQueueID);
         if (m_universalQueueMap.end() != iter)
         {
             return iter->second;
         }
 
-        SPUniversalQueue spUniversalQueue(::new UniversalQueue());
+        SPUniversalQueue spUniversalQueue(::new UnQueueInstance());
         bRetCode = spUniversalQueue->SetQueueID(dwQueueID);
         AddUniversalQueue(dwQueueID, spUniversalQueue);
 

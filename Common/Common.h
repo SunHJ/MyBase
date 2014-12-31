@@ -8,5 +8,7 @@
 #include "SharedPtr.h"
 #include "File.h"
 #include "Buffer.h"
+#include "LinkedList.h"
+#include "UniversalQueue.h"
 
 #endif //__INCLUDE_COMMON_H__

@@ -39,7 +39,7 @@ FixedSizeBuffer::~FixedSizeBuffer()
 	m_nUsedSize = 0;
 }
 
-PVOID FixedSizeBuffer::GetDataPtr(IN CONST size_t nPos /* = 0 */) CONST
+PVOID FixedSizeBuffer::GetDataPtr(CONST size_t nPos /* = 0 */) CONST
 {
 	CHECK_RETURN_CODE_QUIET(nPos>=0 && nPos<m_nUsedSize, NULL);
 	PCHAR pPos = static_cast<PCHAR>(m_pvData);
@@ -85,7 +85,7 @@ BOOL FixedSizeBuffer::InsertDataIntoTail(CPCVOID cpcData, CONST size_t nDataByte
 	return TRUE;
 }
 
-BOOL FixedSizeBuffer::InsertDataIntoHead(IN CPCVOID cpcData, IN CONST size_t nDataBytes)
+BOOL FixedSizeBuffer::InsertDataIntoHead(CPCVOID cpcData, CONST size_t nDataBytes)
 {
 	CHECK_RETURN_BOOL_QUIET(NULL != cpcData && nDataBytes >= 0);
 	CHECK_RETURN_BOOL_QUIET(m_nTotalSize>0 && m_nUsedSize<=m_nTotalSize);
@@ -162,7 +162,7 @@ DynamicBuffer::~DynamicBuffer()
 	m_nUsedSize  = 0;
 }
 
-PVOID DynamicBuffer::GetDataPtr(IN CONST size_t nPos) CONST
+PVOID DynamicBuffer::GetDataPtr(CONST size_t nPos) CONST
 {
 	CHECK_RETURN_CODE_QUIET(nPos >= 0 && nPos < m_nUsedSize, NULL);
 	PCHAR pPos = static_cast<PCHAR>(m_pvData) + nPos;
