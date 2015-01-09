@@ -203,6 +203,12 @@ VOID DynamicBuffer::Reset()
 	m_nUsedSize = 0;
 }
 
+VOID DynamicBuffer::SetUseSize(CONST size_t nDataBytes)
+{
+	ASSERT(nDataBytes < m_nTotalSize);
+	m_nUsedSize = nDataBytes;
+}
+
 BOOL DynamicBuffer::InsertDataIntoTail(CPCVOID cpcData, CONST size_t nDataBytes)
 {
 	CHECK_RETURN_BOOL_QUIET(NULL != cpcData && m_nTotalSize > 0 && m_nUsedSize <= m_nTotalSize);

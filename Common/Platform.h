@@ -24,9 +24,9 @@
 
 #ifdef WIN32
 	#define WIN32_LEAN_AND_MEAN			 // 不加载MFC所需的模块。在编译链接时，以及在最后生成的一些供调试用的模块时，速度更快，容量更小。
-	//#include <WinSock2.h>
 	#include <windows.h>   
 	#include <process.h>
+	#include <time.h>
 	#undef WIN32_LEAN_AND_MEAN
 #else
     #include <string.h>
@@ -34,13 +34,15 @@
 	#include <pthread.h>
     #include <semaphore.h>
 	#include <sys/time.h>	
-	#include <sys/stat.h>
+	#include <sys/stat.h>  
     
-	#define TRUE        1
-    #define FALSE       0
-    #define INFINITE    0xFFFFFFFF
-    #define VOID        void
-    #define CONST       const
+	#define TRUE			1
+    #define FALSE			0
+    #define INFINITE		0xFFFFFFFF
+    #define VOID			void
+	#define CONST			const 	  
+	#define INVALID_SOCKET	(-1)
+	#define SOCKET_ERROR	(-1)
 #endif // WIN32
 
 #endif	// __PUBLIC_PLATFORM_H__

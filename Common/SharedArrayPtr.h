@@ -19,7 +19,7 @@ private:
 public:
 	// the "explicit" keyword is necessary, or user may mistake to use BSharedArrayPtr like this:
 	// BSharedArrayPtr<INT> sp = ::new INT[5]; sp = ::new INT[6]; then a memory leak will occur.
-	explicit SharedArrayPtr(T *ptr = NULL) : m_ptr(ptr), m_counter(ptr, g_CheckedDeleteArrayPtr<T>)
+	explicit SharedArrayPtr(T *ptr = NULL) : m_ptr(ptr), m_counter(ptr, g_SafelyDeleteArrayPtr<T>)
 	{
 	}
 

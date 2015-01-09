@@ -58,7 +58,7 @@ public:
 	BOOL InsertDataIntoPos (CONST size_t nPos, CPCVOID cpcData, CONST size_t nDataBytes);
 
 	VOID Reset();
-
+	VOID SetUseSize(CONST size_t nDataBytes);
 protected:
 	BOOL ReAllocate();
 };

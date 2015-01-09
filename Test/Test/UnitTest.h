@@ -2,7 +2,7 @@
 #define __TEST_UNITTEST_H__
 #include "Common.h"
 
-class MyThreadClass : public Thread
+class MyThreadClass : public IThread
 {
 public:
 	MyThreadClass();
@@ -28,5 +28,7 @@ extern void Test_File();
 extern void Test_Pointer();
 
 extern void Test_Buffer();
+
+extern void Test_Net();
 
 #endif

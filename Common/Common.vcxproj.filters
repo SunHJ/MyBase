@@ -16,6 +16,9 @@
     <Filter Include="Structure">
       <UniqueIdentifier>{3a23e7a3-0456-49c0-9e0a-c5f5f686709a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Net">
+      <UniqueIdentifier>{dd8d359f-53d5-467a-9fa5-1be76e2ace52}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public.h" />
@@ -74,6 +77,24 @@
     <ClInclude Include="UniversalQueue.h">
       <Filter>Structure</Filter>
     </ClInclude>
+    <ClInclude Include="SocketWrapper.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketStream.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketEvent.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketAcceptor.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="SelecterServer.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameControl.h">
+      <Filter>Structure</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Thread.cpp">
@@ -92,6 +113,24 @@
       <Filter>File</Filter>
     </ClCompile>
     <ClCompile Include="Buffer.cpp">
+      <Filter>Structure</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketWrapper.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketStream.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketEvent.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketAcceptor.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="SelecterServer.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameControl.cpp">
       <Filter>Structure</Filter>
     </ClCompile>
   </ItemGroup>

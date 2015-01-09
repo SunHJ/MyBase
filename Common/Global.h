@@ -15,6 +15,7 @@ CONST int MAX_IP_ADDR_LEN = 16;                     // Include '\0' character
 CONST DWORD INVALID_ID_VALUE = static_cast<DWORD>(-1); // Invalid number id of a string
 
 CONST size_t DEFAULT_MAX_BUFFER_LEN = 8;
+CONST size_t DEFAULT_BUFFER_SIZE = 4097;
 
 /*---------------------------------- GLOBAL FUNCTION DEFINE ---------------------------------*/
 template <class T>

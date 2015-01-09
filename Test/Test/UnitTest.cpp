@@ -137,3 +137,28 @@ void Test_Buffer()
 	PCHAR pString = static_cast<PCHAR>(pBuffer);
 	printf("%s\n", pString);
 }
+
+extern void Test_Net()
+{
+	SelecterServer server;
+	server.Start("", 1234);
+	char cType = 0;
+	while (true)
+	{
+		//scanf("%c", &cType);
+		std::cin >> cType;
+		if (cType == 'q')
+		{
+			break;
+		}
+		else if (cType == 's')
+		{
+			server.Stop();
+		}
+		else
+		{
+			printf("UnKnown CMD\n");
+		}
+
+	}
+}

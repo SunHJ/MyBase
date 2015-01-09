@@ -27,7 +27,8 @@ size_t              4                   8                   4                   
     typedef int 					LONG;       // 4bytes
     typedef signed   long long		INT64;      // 8bytes
     typedef unsigned long long		UINT64;     // 8bytes
-    typedef unsigned int			ULONG_PTR;  // 4bytes
+	typedef unsigned int			ULONG_PTR;  // 4bytes
+	typedef int						SOCKET;
 #endif //PLATFORM_OS_WINDOWS
 
 typedef unsigned int			UINT;

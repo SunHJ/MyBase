@@ -17,7 +17,7 @@ typedef enum _ThreadStatus{
     eSuspend
 }emThreadStatus;
 
-class Thread : private UnCopyable
+class IThread : private UnCopyable
 {
 private:
 	emThreadStatus  m_eFlag;
@@ -26,7 +26,7 @@ private:
 #ifdef WIN32
 	HANDLE m_hThread;
 	HANDLE GetHandle() CONST;
-	static THREAD_FUNC_RET_TYPE __stdcall ThreadFunction(VOID *);
+	static THREAD_FUNC_RET_TYPE WINAPI ThreadFunction(VOID *);
 #else
     pthread_mutex_t mutex;
     pthread_cond_t cond;
@@ -34,8 +34,8 @@ private:
 #endif
 
 protected:
-	Thread();
-	virtual ~Thread();
+	IThread();
+	virtual ~IThread();
 
 public:
 	virtual BOOL Init();
@@ -49,6 +49,29 @@ public:
 private:
     virtual VOID PreRun();
 	virtual UINT Run() = 0;
+};
+
+typedef VOID(*ThreadFun)(VOID*);
+
+class SimpleThread : private UnCopyable
+{
+public:
+	SimpleThread();
+	~SimpleThread();
+	BOOL Start(ThreadFun pFunction, VOID* pParam);
+	VOID Stop();
+
+private:
+	BOOL		m_bState;
+	ThreadFun	m_pFunction;
+	VOID*		m_pParam;
+#ifdef PLATFORM_OS_WINDOWS	
+	HANDLE 	m_hThread;
+	static THREAD_FUNC_RET_TYPE WINAPI ThreadFunction(VOID *pValue);
+#else		
+	pthread_t 	m_hThread;
+	static THREAD_FUNC_RET_TYPE ThreadFunction(VOID* pParam);
+#endif //PLATFORM_OS_WINDOWS
 };
 
 #endif	//__SYNCHRONIZATION_THREAD_H__

@@ -10,5 +10,6 @@
 #include "Buffer.h"
 #include "LinkedList.h"
 #include "UniversalQueue.h"
+#include "SelecterServer.h"
 
 #endif //__INCLUDE_COMMON_H__

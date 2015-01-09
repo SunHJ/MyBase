@@ -90,6 +90,7 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClInclude Include="Event.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="FileWraper.h" />
+    <ClInclude Include="FrameControl.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="Macro.h" />
@@ -98,9 +99,14 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClInclude Include="RefCounter.h" />
     <ClInclude Include="ScopedArrayPtr.h" />
     <ClInclude Include="ScopedPtr.h" />
+    <ClInclude Include="SelecterServer.h" />
     <ClInclude Include="Semaphore.h" />
     <ClInclude Include="SharedArrayPtr.h" />
     <ClInclude Include="SharedPtr.h" />
+    <ClInclude Include="SocketAcceptor.h" />
+    <ClInclude Include="SocketEvent.h" />
+    <ClInclude Include="SocketStream.h" />
+    <ClInclude Include="SocketWrapper.h" />
     <ClInclude Include="Thread.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="UniversalQueue.h" />
@@ -110,7 +116,13 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClCompile Include="CriticalSection.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="File.cpp" />
+    <ClCompile Include="FrameControl.cpp" />
+    <ClCompile Include="SelecterServer.cpp" />
     <ClCompile Include="Semaphore.cpp" />
+    <ClCompile Include="SocketAcceptor.cpp" />
+    <ClCompile Include="SocketEvent.cpp" />
+    <ClCompile Include="SocketStream.cpp" />
+    <ClCompile Include="SocketWrapper.cpp" />
     <ClCompile Include="Thread.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

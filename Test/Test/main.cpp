@@ -30,12 +30,12 @@ int main(int argc, char* argv[])
 //  	Test_Interlocked();
 //  	Test_GlobalFun();
 // 
- 	Test_Thread();
+// 	Test_Thread();
 // 	Test_File();
 // 
 // 	Test_Pointer(); 
 //     TestSize<int> test;
 //	Test_Buffer();
-
+	Test_Net();
 	return 0;
 }

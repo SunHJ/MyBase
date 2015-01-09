@@ -4,19 +4,19 @@
 
 #ifdef PLATFORM_OS_WINDOWS
 CONST DWORD INVALID_DW_VALUE = static_cast<DWORD>(-1);
-HANDLE Thread::GetHandle() CONST
+HANDLE IThread::GetHandle() CONST
 {
 	return m_hThread;
 }
 
-THREAD_FUNC_RET_TYPE __stdcall Thread::ThreadFunction(VOID *pValue)
+THREAD_FUNC_RET_TYPE WINAPI IThread::ThreadFunction(VOID *pValue)
 #else
-THREAD_FUNC_RET_TYPE Thread::ThreadFunction(VOID *pValue)
-#endif // WIN32
+THREAD_FUNC_RET_TYPE IThread::ThreadFunction(VOID *pValue)
+#endif // PLATFORM_OS_WINDOWS
 {
 	UINT                 uReCode = 0;
 	THREAD_FUNC_RET_TYPE reValue = 0;
-	Thread* pThisThread = (Thread*)pValue;
+	IThread* pThisThread = (IThread*)pValue;
 	if (NULL != pThisThread)
 	{
 		while (true)
@@ -28,7 +28,7 @@ THREAD_FUNC_RET_TYPE Thread::ThreadFunction(VOID *pValue)
 	return reValue;
 }
 
-Thread::Thread()
+IThread::IThread()
 {
 	m_eFlag = eNone;
 	m_threadID = 0;
@@ -38,20 +38,20 @@ Thread::Thread()
 #else
 	pthread_mutex_init(&mutex, NULL);
     pthread_cond_init(&cond, NULL);
-#endif
+#endif //PLATFORM_OS_WINDOWS
 }
 
-Thread::~Thread()
+IThread::~IThread()
 {
-	Thread::Stop();
+	IThread::Stop();
 }
 
-BOOL Thread::Init()
+BOOL IThread::Init()
 {
 	return TRUE;
 }
 
-BOOL Thread::Start()
+BOOL IThread::Start()
 {
     BOOL bResult = FALSE;
 	if (m_threadID <= 0)
@@ -70,7 +70,7 @@ BOOL Thread::Start()
 	return bResult;
 }
 
-VOID Thread::PreRun()
+VOID IThread::PreRun()
 { 
 #ifdef PLATFORM_OS_WINDOWS
 
@@ -86,7 +86,7 @@ VOID Thread::PreRun()
 #endif // PLATFORM_OS_WINDOWS
 }
 
-BOOL Thread::Stop(DWORD dwExitCode /* = 0 */)
+BOOL IThread::Stop(DWORD dwExitCode /* = 0 */)
 {
 	BOOL bResult = FALSE;
 	INT nRetCode = 0;
@@ -112,7 +112,7 @@ BOOL Thread::Stop(DWORD dwExitCode /* = 0 */)
 	return bResult;
 }
 
-BOOL Thread::SuspendThread()
+BOOL IThread::SuspendThread()
 {
 	BOOL bResult = FALSE;
 	CHECK_RETURN_BOOL_QUIET(m_threadID > 0);
@@ -138,7 +138,7 @@ BOOL Thread::SuspendThread()
 	return bResult;
 }
 
-BOOL Thread::ResumeThread()
+BOOL IThread::ResumeThread()
 {
 	BOOL bResult = FALSE;
 	CHECK_RETURN_BOOL_QUIET(m_threadID > 0);
@@ -161,4 +161,83 @@ BOOL Thread::ResumeThread()
 #endif // PLATFORM_OS_WINDOWS
 	}
 	return bResult;
+}
+
+SimpleThread::SimpleThread()
+{
+	m_bState = FALSE;
+	m_pFunction = NULL;
+	m_pParam = NULL;
+#ifdef PLATFORM_OS_WINDOWS
+	m_hThread = NULL;
+#else
+	m_hThread = 0;
+#endif //PLATFORM_OS_WINDOWS
+}
+
+SimpleThread::~SimpleThread()
+{
+	ASSERT(!m_hThread);
+}
+
+BOOL SimpleThread::Start(ThreadFun pFunction, VOID* pParam)
+{
+	printf(">>>>>>SimpleThread::Start\n");
+	ASSERT(!m_hThread && pFunction);
+	m_pFunction = pFunction;
+	m_pParam = pParam;
+	BOOL bReFalseCode = FALSE;
+#ifdef PLATFORM_OS_WINDOWS	   
+	UINT nThreadId = 0;
+	m_hThread = (HANDLE)::_beginthreadex(0, 0, &SimpleThread::ThreadFunction, (VOID*)this, 0, &nThreadId);
+	bReFalseCode = (m_hThread == NULL);
+#else
+	bReFalseCode = ::pthread_create(&m_hThread, NULL, &SimpleThread::ThreadFunction, this)
+#endif //PLATFORM_OS_WINDOWS
+	if (bReFalseCode)
+	{
+		ASSERT(FALSE);
+		m_pFunction = NULL;
+		m_pParam = NULL;
+		return FALSE;
+	}
+	m_bState = TRUE;
+	return TRUE;
+}
+
+VOID SimpleThread::Stop()
+{
+	if (!m_bState)
+	{
+		return;
+	}
+#ifdef PLATFORM_OS_WINDOWS 
+	ASSERT(m_hThread);
+	DWORD dwResult = ::WaitForSingleObject(m_hThread, 60 * 1000);
+	if (dwResult == WAIT_TIMEOUT)
+	{
+		::TerminateThread(m_hThread, (DWORD)(-1));
+	}
+	::CloseHandle(m_hThread);
+#else	 
+	ASSERT(m_hThread > 0);
+	void* pRet = NULL;
+	::pthread_join(m_hThread, &pRet);
+#endif //PLATFORM_OS_WINDOWS	   
+	m_hThread = NULL;
+	m_pFunction = NULL;
+	m_pParam = NULL;
+	m_bState = FALSE;
+}
+
+#ifdef PLATFORM_OS_WINDOWS
+THREAD_FUNC_RET_TYPE SimpleThread::ThreadFunction(VOID* pParam)
+#else
+THREAD_FUNC_RET_TYPE SimpleThread::ThreadFunction(VOID* pParam)
+#endif //PLATFORM_OS_WINDOWS
+{
+	printf("<<<<<<<<<<<<<<SimpleThread::ThreadFunction(VOID* pParam)\n");
+	SimpleThread* pThread = (SimpleThread*)pParam;
+	(pThread->m_pFunction)(pThread->m_pParam);
+	return 0;
 }
