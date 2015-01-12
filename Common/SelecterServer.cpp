@@ -148,7 +148,7 @@ VOID SelecterServer::MainLoop()
 	m_SemStop.ReleaseSemaphore();
 }
 
-VOID SelecterServer::WorkThreadFun(void* pParam)
+VOID SelecterServer::WorkThreadFun(VOID* pParam)
 {
 	ASSERT(pParam);
 	SelecterServer* pServer = (SelecterServer*)pParam;

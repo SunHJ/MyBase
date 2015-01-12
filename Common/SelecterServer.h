@@ -20,18 +20,18 @@ public:
 	virtual VOID ProcessClentClose(SPAsyncSocketStream &spSocketStream);
 
 private:
-	static VOID WorkThreadFun(void* pParam);
+	static VOID WorkThreadFun(VOID* pParam);
 
 	VOID MainLoop();
 
 private:
 	BOOL m_bStop;
 	Semaphore		m_SemStop;
-	SimpleThread	m_cThread;
+	SimpleThread	m_cThread;			 
+	SPDynamicBuffer				m_spBuffer;
 	SPNonBlockSocketAcceptor	m_spSocketAcceptor;
 	SPAsyncSocketStreamQueue	m_spConnectSocket;
 	SPAsyncSocketEventArray		m_spEventArray;  
-	SPDynamicBuffer				m_spBuffer;
 };
 
 #endif //__NET_SELECTER_SERVER_H__
