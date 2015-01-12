@@ -65,8 +65,9 @@ private:
 	BOOL		m_bState;
 	ThreadFun	m_pFunction;
 	VOID*		m_pParam;
-    THREAD_ID   m_hThread;
+    THREAD_ID   m_uThreadId;
 #ifdef PLATFORM_OS_WINDOWS	
+	HANDLE m_hThread;
 	static THREAD_FUNC_RET_TYPE WINAPI ThreadFunction(VOID *pValue);
 #else		
 	static THREAD_FUNC_RET_TYPE ThreadFunction(VOID* pParam);

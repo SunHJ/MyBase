@@ -1,5 +1,11 @@
 #include "SocketAcceptor.h"
 
+#ifdef PLATFORM_OS_WINDOWS
+	typedef int SockLen;
+#else
+	typedef socklen_t SockLen;
+#endif // PLATFORM_OS_WINDOWS
+
 // 1  : indicates sucess
 // 0  : non waiting connection or operations will complete later
 // -1 : accept failed. this indicates a serious system error
@@ -10,7 +16,7 @@ inline INT g_AcceptToAsyncSocketStream(SOCKET hListenSocket, PAsyncSocketStream 
 	g_SetErrorCode(pErrorCode, 0);
 	struct sockaddr_in saRemoteAddr;
 	SOCKET hRemoteSocket = INVALID_SOCKET;
-	socklen_t nAddrLen = sizeof(struct sockaddr_in);
+	SockLen nAddrLen = sizeof(struct sockaddr_in);
 	BOOL bLoopFlag = TRUE, bRetCode = FALSE;
 
 	while (bLoopFlag)

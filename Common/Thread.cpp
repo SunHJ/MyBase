@@ -165,34 +165,33 @@ BOOL IThread::ResumeThread()
 
 SimpleThread::SimpleThread()
 {
-	m_bState = FALSE;
+	m_bState	= FALSE;
 	m_pFunction = NULL;
-	m_pParam = NULL;
+	m_pParam	= NULL;
+	m_uThreadId = 0;
+
 #ifdef PLATFORM_OS_WINDOWS
 	m_hThread = NULL;
-#else
-	m_hThread = 0;
 #endif //PLATFORM_OS_WINDOWS
 }
 
 SimpleThread::~SimpleThread()
 {
-	ASSERT(!m_hThread);
+	ASSERT(!m_uThreadId);
 }
 
 BOOL SimpleThread::Start(ThreadFun pFunction, VOID* pParam)
 {
 	printf(">>>>>>SimpleThread::Start\n");
-	ASSERT(!m_hThread && pFunction);
+	ASSERT(!m_uThreadId && pFunction);
 	m_pFunction = pFunction;
 	m_pParam = pParam;
 	BOOL bReFalseCode = FALSE;
-#ifdef PLATFORM_OS_WINDOWS	   
-	UINT nThreadId = 0;
-	m_hThread = (HANDLE)::_beginthreadex(0, 0, &SimpleThread::ThreadFunction, (VOID*)this, 0, &nThreadId);
+#ifdef PLATFORM_OS_WINDOWS
+	m_hThread = (HANDLE)::_beginthreadex(0, 0, &SimpleThread::ThreadFunction, (VOID*)this, 0, &m_uThreadId);
 	bReFalseCode = (m_hThread == NULL);
 #else
-	bReFalseCode = ::pthread_create(&m_hThread, NULL, &SimpleThread::ThreadFunction, this);
+	bReFalseCode = ::pthread_create(&m_uThreadId, NULL, &SimpleThread::ThreadFunction, this);
 #endif //PLATFORM_OS_WINDOWS
 	if (bReFalseCode)
 	{
@@ -212,19 +211,19 @@ VOID SimpleThread::Stop()
 		return;
 	}
 #ifdef PLATFORM_OS_WINDOWS 
-	ASSERT(m_hThread);
+	ASSERT(m_uThreadId);
 	DWORD dwResult = ::WaitForSingleObject(m_hThread, 60 * 1000);
 	if (dwResult == WAIT_TIMEOUT)
 	{
 		::TerminateThread(m_hThread, (DWORD)(-1));
 	}
 	::CloseHandle(m_hThread);
-    m_hThread = NULL;
+    m_uThreadId = NULL;
 #else	 
-	ASSERT(m_hThread > 0);
+	ASSERT(m_uThreadId > 0);
 	void* pRet = NULL;
-	::pthread_join(m_hThread, &pRet);
-    m_hThread = 0;
+	::pthread_join(m_uThreadId, &pRet);
+    m_uThreadId = 0;
 #endif //PLATFORM_OS_WINDOWS	   
 	m_pFunction = NULL;
 	m_pParam = NULL;
