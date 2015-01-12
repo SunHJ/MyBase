@@ -62,7 +62,6 @@ public:
 	VOID Stop();
 
 private:
-	BOOL		m_bState;
 	ThreadFun	m_pFunction;
 	VOID*		m_pParam;
     THREAD_ID   m_uThreadId;

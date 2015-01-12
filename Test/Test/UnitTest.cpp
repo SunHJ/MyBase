@@ -149,6 +149,7 @@ extern void Test_Net()
 		std::cin >> cType;
 		if (cType == 'q')
 		{
+			server.Stop();
 			break;
 		}
 		else if (cType == 's')

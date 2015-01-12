@@ -1,6 +1,6 @@
 #include "SelecterServer.h"
 
-SelecterServer::SelecterServer() : m_bStop(TRUE), m_bStart(FALSE)
+SelecterServer::SelecterServer() : m_bStop(TRUE)
 {
 #ifdef PLATFORM_OS_WINDOWS
 	ASSERT(SINGLETON_GET_PTR(NetService)->Strat());
@@ -30,21 +30,16 @@ SelecterServer::~SelecterServer()
 BOOL SelecterServer::Start(STRING szIp, USHORT uPort)
 {
 	BOOL bReCode = FALSE;
-	if (m_bStart)
-	{
-		return FALSE;
-	}
 
 	bReCode = m_spSocketAcceptor->Init(szIp, uPort);
 	PROCESS_ERROR(bReCode);
 	
 	// Start Work Thread
 	m_bStop = FALSE;
-	bReCode = m_cThread.Start(&SelecterServer::ThreadFunction, (VOID*)this);
+	bReCode = m_cThread.Start(&SelecterServer::WorkThreadFun, (VOID*)this);
 	PROCESS_ERROR(bReCode);
 
 	printf("Server(Port:%d) Start Success \n", uPort);
-	m_bStart = TRUE;
 
 Exit0:
 	if (m_bStop)
@@ -56,11 +51,12 @@ Exit0:
 
 VOID SelecterServer::Stop()
 {
-	if (!m_bStart)
+	m_bStop = TRUE;
+	if (!m_SemStop.WaitSemaphore(10 * 1000))
 	{
-		return;
+		m_cThread.Stop();
 	}
-	m_cThread.Stop();
+
 	m_spSocketAcceptor->UnInit();
 	m_spConnectSocket->CloseAll();
 }
@@ -110,11 +106,6 @@ VOID SelecterServer::ProcessClentClose(SPAsyncSocketStream &spSocketStream)
 
 VOID SelecterServer::MainLoop()
 {
-	if (!m_bStart)
-	{
-		return;
-	}
-
 	INT nEventCount = 0;
 	while (!m_bStop)
 	{
@@ -154,9 +145,10 @@ VOID SelecterServer::MainLoop()
 		}
 		g_MilliSleep(50);
 	}
+	m_SemStop.ReleaseSemaphore();
 }
 
-VOID SelecterServer::ThreadFunction(void* pParam)
+VOID SelecterServer::WorkThreadFun(void* pParam)
 {
 	ASSERT(pParam);
 	SelecterServer* pServer = (SelecterServer*)pParam;

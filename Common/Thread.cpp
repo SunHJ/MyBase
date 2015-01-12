@@ -165,7 +165,6 @@ BOOL IThread::ResumeThread()
 
 SimpleThread::SimpleThread()
 {
-	m_bState	= FALSE;
 	m_pFunction = NULL;
 	m_pParam	= NULL;
 	m_uThreadId = 0;
@@ -199,19 +198,14 @@ BOOL SimpleThread::Start(ThreadFun pFunction, VOID* pParam)
 		m_pParam = NULL;
 		return FALSE;
 	}
-	m_bState = TRUE;
 	return TRUE;
 }
 
 VOID SimpleThread::Stop()
 {
-	if (!m_bState)
-	{
-		return;
-	}
 #ifdef PLATFORM_OS_WINDOWS 
 	ASSERT(m_uThreadId);
-	DWORD dwResult = ::WaitForSingleObject(m_hThread, 60 * 1000);
+	DWORD dwResult = ::WaitForSingleObject(m_hThread, 10 * 1000);
 	if (dwResult == WAIT_TIMEOUT)
 	{
 		::TerminateThread(m_hThread, (DWORD)(-1));
@@ -226,11 +220,10 @@ VOID SimpleThread::Stop()
 #endif //PLATFORM_OS_WINDOWS	   
 	m_pFunction = NULL;
 	m_pParam = NULL;
-	m_bState = FALSE;
 }
 
 #ifdef PLATFORM_OS_WINDOWS
-THREAD_FUNC_RET_TYPE SimpleThread::ThreadFunction(VOID* pParam)
+THREAD_FUNC_RET_TYPE WINAPI SimpleThread::ThreadFunction(VOID* pParam)
 #else
 THREAD_FUNC_RET_TYPE SimpleThread::ThreadFunction(VOID* pParam)
 #endif //PLATFORM_OS_WINDOWS
