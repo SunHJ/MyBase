@@ -65,11 +65,10 @@ private:
 	BOOL		m_bState;
 	ThreadFun	m_pFunction;
 	VOID*		m_pParam;
+    THREAD_ID   m_hThread;
 #ifdef PLATFORM_OS_WINDOWS	
-	HANDLE 	m_hThread;
 	static THREAD_FUNC_RET_TYPE WINAPI ThreadFunction(VOID *pValue);
 #else		
-	pthread_t 	m_hThread;
 	static THREAD_FUNC_RET_TYPE ThreadFunction(VOID* pParam);
 #endif //PLATFORM_OS_WINDOWS
 };

@@ -2,8 +2,9 @@
 
 SelecterServer::SelecterServer() : m_bStop(TRUE), m_bStart(FALSE)
 {
+#ifdef PLATFORM_OS_WINDOWS
 	ASSERT(SINGLETON_GET_PTR(NetService)->Strat());
-
+#endif // PLATFORM_OS_WINDOWS
 	PDynamicBuffer pBuffer = ::new DynamicBuffer(DEFAULT_BUFFER_SIZE);
 	m_spBuffer = SPDynamicBuffer(pBuffer);
 
@@ -21,7 +22,9 @@ SelecterServer::SelecterServer() : m_bStop(TRUE), m_bStart(FALSE)
 
 SelecterServer::~SelecterServer()
 {
+#ifdef PLATFORM_OS_WINDOWS
 	SINGLETON_GET_PTR(NetService)->Stop();
+#endif // PLATFORM_OS_WINDOWS
 }
 
 BOOL SelecterServer::Start(STRING szIp, USHORT uPort)
@@ -94,7 +97,7 @@ VOID SelecterServer::ProcessNetMessage(SPAsyncSocketStream &spSocketStream)
 	}
 	else
 	{
-		printf("error!!! num=%d\n", spSocketStream->GetRemoteIp().c_str(), nErrorCode);
+		printf("error!!! num=%d\n", nErrorCode);
 	}
 }
 

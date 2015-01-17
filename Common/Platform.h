@@ -35,7 +35,8 @@
     #include <semaphore.h>
 	#include <sys/time.h>	
 	#include <sys/stat.h>  
-    
+    #include <errno.h>
+
 	#define TRUE			1
     #define FALSE			0
     #define INFINITE		0xFFFFFFFF

@@ -12,7 +12,8 @@ $(shell mkdir -p $(bin_dir))
 $(shell mkdir -p $(obj_dir))
 
 obj=Thread.o CriticalSection.o Semaphore.o Event.o File.o \
-   	Buffer.o
+   	Buffer.o SocketWrapper.o SocketStream.o SocketEvent.o \
+	SocketAcceptor.o SelecterServer.o
 tag=libcommon.a
 
 
@@ -38,6 +39,21 @@ File.o:File.cpp
 
 Buffer.o:Buffer.cpp
 	$(CC) -c Buffer.cpp -std=c++11
+
+SocketWrapper.o:SocketWrapper.cpp
+	$(CC) -c SocketWrapper.cpp
+
+SocketStream.o:SocketStream.cpp
+	$(CC) -c SocketStream.cpp -std=c++11
+
+SocketEvent.o:SocketEvent.cpp
+	$(CC) -c SocketEvent.cpp -std=c++11
+
+SocketAcceptor.o:SocketAcceptor.cpp
+	$(CC) -c SocketAcceptor.cpp -std=c++11
+
+SelecterServer.o:SelecterServer.cpp
+	$(CC) -c SelecterServer.cpp -std=c++11
 
 #$(shell cp $(obj) $(obj_dir))
 #$(shell cp $(tag) $(lib_dir))

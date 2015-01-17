@@ -1,7 +1,8 @@
+#include "Platform.h"
 #include "Global.h"
 #include "SocketWrapper.h"
 
-inline SOCKET g_CreateTCPSocket()
+SOCKET g_CreateTCPSocket()
 {
 	SOCKET s = ::socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
 	PROCESS_ERROR(s > 0);
@@ -11,14 +12,14 @@ Exit0:
 	return INVALID_SOCKET;
 }
 
-inline SOCKET g_CreateUDPSocket()
+SOCKET g_CreateUDPSocket()
 {
 	SOCKET s = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
 	CHECK_RETURN_BOOL(s > 0);
 	return INVALID_SOCKET;
 }
 
-inline SOCKET g_CreateListenSocket(CONST CHAR *cszIP, USHORT usPort, INT *pErrorCode)
+SOCKET g_CreateListenSocket(CONST CHAR *cszIP, USHORT usPort, INT *pErrorCode)
 {
 	SOCKET nListenSocket = g_CreateTCPSocket();
 	ULONG ulAddress = INADDR_ANY;
@@ -54,11 +55,12 @@ Exit0:
 	return nListenSocket;
 }
 
-inline SOCKET g_ConnectServerSocket(IN CPCCHAR cpcHostIP, IN USHORT usPort, INT *pErrorCode /* = NULL */)
+SOCKET g_ConnectServerSocket(CPCCHAR cpcHostIP, USHORT usPort, INT *pErrorCode /* = NULL */)
 {
 	SOCKET nReturnSocket = g_CreateTCPSocket();
 	ULONG ulAddress = INADDR_ANY;
 	INT nRetCode = 0;
+    INT nOptVal = 1;
 	sockaddr_in saServerAddr;
 
 	PROCESS_ERROR(INVALID_SOCKET != nReturnSocket);
@@ -71,7 +73,6 @@ inline SOCKET g_ConnectServerSocket(IN CPCCHAR cpcHostIP, IN USHORT usPort, INT 
 		}
 	}
 
-	INT nOptVal = 1;
 	nRetCode = ::setsockopt(nReturnSocket, SOL_SOCKET, SO_REUSEADDR, (char *)&nOptVal, sizeof(nOptVal));
 	PROCESS_ERROR(0 == nRetCode);
 
@@ -90,7 +91,9 @@ Exit0:
 	return nReturnSocket;
 }
 
+//Windows 与 Linux 不同实现 
 #ifdef PLATFORM_OS_WINDOWS
+
 NetService::NetService() : m_lStarted(0)
 {
 	NetService::Strat();
@@ -116,7 +119,7 @@ BOOL NetService::Strat(WORD wHighVersion /* = 2 */, WORD wLowVersion /* = 2 */)
 	return TRUE;
 }
 
-inline BOOL NetService::Stop()
+BOOL NetService::Stop()
 {
 	INT nRetCode = 0;
 	if (0 == g_AtomicDecrement(&m_lStarted))
@@ -127,17 +130,17 @@ inline BOOL NetService::Stop()
 	return TRUE;
 }
 
-inline INT g_GetSocketLastError()
+INT g_GetSocketLastError()
 {
 	return ::WSAGetLastError();
 }
 
-inline INT g_IsSocketCanRestore()
+INT g_IsSocketCanRestore()
 { 
 	return (EINTR == ::WSAGetLastError());
 }
 
-inline INT g_IsSocketWouldBlock()
+INT g_IsSocketWouldBlock()
 {
 	// WSA_IO_PENDING : overlapped operations will complete later.
 	// WSAEWOULDBLOCK : non waiting connection in listen-socket queue.
@@ -149,7 +152,7 @@ inline INT g_IsSocketWouldBlock()
 }
 
 // return -1: error, 0: timeout, 1: success
-inline INT g_CheckCanRecv(SOCKET nSocket, CONST timeval *pcTimeout)
+INT g_CheckCanRecv(SOCKET nSocket, CONST timeval *pcTimeout)
 {
 	if (INVALID_SOCKET == nSocket)
 		return -1;
@@ -180,7 +183,7 @@ inline INT g_CheckCanRecv(SOCKET nSocket, CONST timeval *pcTimeout)
 }
 
 // return -1: error, 0: timeout, 1: success
-inline INT g_CheckCanSend(SOCKET nSocket, CONST timeval *pcTimeout)
+INT g_CheckCanSend(SOCKET nSocket, CONST timeval *pcTimeout)
 {
 	if (INVALID_SOCKET == nSocket)
 		return -1;
@@ -210,7 +213,7 @@ inline INT g_CheckCanSend(SOCKET nSocket, CONST timeval *pcTimeout)
 	return -1;
 }
 
-inline BOOL g_CloseSocket(SOCKET &s)
+BOOL g_CloseSocket(SOCKET &s)
 {
 	if (INVALID_SOCKET != s)
 	{
@@ -226,7 +229,7 @@ inline BOOL g_CloseSocket(SOCKET &s)
 	return TRUE;
 }
 
-inline BOOL g_SetSocketNonBlock(SOCKET &s, INT *pErrorCode)
+BOOL g_SetSocketNonBlock(SOCKET &s, INT *pErrorCode)
 {
 	INT nRetCode = 0;
 	ULONG ulOption = 1;
@@ -239,7 +242,7 @@ Exit0:
 	return FALSE;
 }
 
-inline BOOL g_SetSocketRecvTimeout(SOCKET &s, DWORD dwMilliSeconds, INT *pErrorCode)
+BOOL g_SetSocketRecvTimeout(SOCKET &s, DWORD dwMilliSeconds, INT *pErrorCode)
 {
 	INT nTimeOut = static_cast<INT>(dwMilliSeconds);
 	INT nRetCode = 0;
@@ -252,7 +255,7 @@ Exit0:
 	return FALSE;
 }
 
-inline BOOL g_SetSocketSendTimeout(SOCKET &s, DWORD dwMilliSeconds, INT *pErrorCode)
+BOOL g_SetSocketSendTimeout(SOCKET &s, DWORD dwMilliSeconds, INT *pErrorCode)
 {
 	INT nTimeOut = static_cast<INT>(dwMilliSeconds);
 	INT nRetCode = 0;
@@ -266,17 +269,17 @@ Exit0:
 }
 
 #else
-inline INT g_GetSocketLastError()
+INT g_GetSocketLastError()
 {
-	return error;
+	return errno;
 }
 
-inline INT g_IsSocketCanRestore()
+INT g_IsSocketCanRestore()
 {
 	return (EINTR == errno);
 }
 
-inline INT g_IsSocketWouldBlock()
+INT g_IsSocketWouldBlock()
 {
 	return (
 		(EAGAIN == errno) || 
@@ -284,7 +287,7 @@ inline INT g_IsSocketWouldBlock()
 }
 
 // return -1: error, 0: timeout, 1: success
-inline INT g_CheckCanRecv(SOCKET nSocket, CONST timeval *pcTimeout)
+INT g_CheckCanRecv(SOCKET nSocket, CONST timeval *pcTimeout)
 {
 	if (INVALID_SOCKET == nSocket)
 		return -1;
@@ -320,7 +323,7 @@ inline INT g_CheckCanRecv(SOCKET nSocket, CONST timeval *pcTimeout)
 }
 
 // return -1: error, 0: timeout, 1: success
-inline INT g_CheckCanSend(SOCKET nSocket, CONST timeval *pcTimeout)
+INT g_CheckCanSend(SOCKET nSocket, CONST timeval *pcTimeout)
 {
 	if (INVALID_SOCKET == nSocket)
 		return -1;
@@ -355,29 +358,30 @@ inline INT g_CheckCanSend(SOCKET nSocket, CONST timeval *pcTimeout)
 	return -1;
 }
 
-inline BOOL g_CloseSocket(SOCKET &s)
+BOOL g_CloseSocket(SOCKET &s)
 {
 	if (INVALID_SOCKET != s)
 	{
+        INT nRetCode = 0;
 		struct linger li;
 		li.l_onoff = 1;
 		li.l_linger = 0;
 		::setsockopt(s, SOL_SOCKET, SO_LINGER, (char *)&li, sizeof(li));
-
-		CHECK_RETURN_BOOL(0 == ::closesocket(s));
+        nRetCode = ::close(s);
+		CHECK_RETURN_BOOL(0 == nRetCode);
 		s = INVALID_SOCKET;
 	}
 
 	return TRUE;
 }
 
-inline BOOL g_SetSocketNonBlock(SOCKET &s, INT *pErrorCode)
+BOOL g_SetSocketNonBlock(SOCKET &s, INT *pErrorCode)
 { 
 	int nRetCode = 0;
 	int nOption  = 0;
 
-	nOption = ::fcntl(nSocket, F_GETFL, 0);
-	nRetCode = ::fcntl(nSocket, F_SETFL, nOption | O_NONBLOCK);
+	nOption = ::fcntl(s, F_GETFL, 0);
+	nRetCode = ::fcntl(s, F_SETFL, nOption | O_NONBLOCK);
 	PROCESS_ERROR(0 == nRetCode);
 
 	return TRUE;
@@ -386,8 +390,9 @@ Exit0:
 	return FALSE;
 }
 
-inline BOOL g_SetSocketRecvTimeout(SOCKET &s, DWORD dwMilliSeconds, INT *pErrorCode)
+BOOL g_SetSocketRecvTimeout(SOCKET &s, DWORD dwMilliSeconds, INT *pErrorCode)
 {
+    INT nRetCode = 0;
 	struct timeval sTimeOut;
 	sTimeOut.tv_sec = dwMilliSeconds / 1000;                                // second
 	sTimeOut.tv_usec = (dwMilliSeconds - sTimeOut.tv_sec * 1000) * 1000;    // microseconds
@@ -400,8 +405,9 @@ Exit0:
 	return FALSE;
 }
 
-inline BOOL g_SetSocketSendTimeout(SOCKET &s, DWORD dwMilliSeconds, INT *pErrorCode)
+BOOL g_SetSocketSendTimeout(SOCKET &s, DWORD dwMilliSeconds, INT *pErrorCode)
 {
+    INT nRetCode = 0;
 	struct timeval sTimeOut;
 	sTimeOut.tv_sec = dwMilliSeconds / 1000;                                // second
 	sTimeOut.tv_usec = (dwMilliSeconds - sTimeOut.tv_sec * 1000) * 1000;    // microseconds
