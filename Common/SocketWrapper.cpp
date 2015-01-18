@@ -91,7 +91,7 @@ Exit0:
 	return nReturnSocket;
 }
 
-//Windows 与 Linux 不同实现 
+//Windows �?Linux 不同实现 
 #ifdef PLATFORM_OS_WINDOWS
 
 NetService::NetService() : m_lStarted(0)
