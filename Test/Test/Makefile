@@ -3,7 +3,7 @@ bin_dir=../../Bin/
 obj_dir=../../Obj/
 
 RM=rm -rf
-CC=g++
+CC=g++ -g
 #AR=ar rc
 
 I_COMMON=-I../../Common/ -std=c++11

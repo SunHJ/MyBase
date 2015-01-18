@@ -110,6 +110,7 @@ VOID SelecterServer::ProcessClentClose(SPAsyncSocketStream &spSocketStream)
 
 VOID SelecterServer::MainLoop()
 {
+    printf("<<<<<<<<<<<<<<SelecterServer::MainLoop");
 	if (!m_bStart)
 	{
 		return;
@@ -129,6 +130,7 @@ VOID SelecterServer::MainLoop()
 
 		for (INT i = 0; i < nEventCount; i++)
 		{
+            printf(">>>>>>>MainLoop>>>>>>%d\n", nEventCount);
 			SPAsyncSocketStream &spSocketStream = m_spEventArray[i].m_spAsyncSocketStream;
 			switch (m_spEventArray[i].m_nEventType)
 			{

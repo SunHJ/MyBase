@@ -155,6 +155,10 @@ extern void Test_Net()
 		{
 			server.Stop();
 		}
+        else if (cType == 'l')
+        {
+            printf(">>>>>Client Count %d\n", server.GetClientCount());
+        }
 		else
 		{
 			printf("UnKnown CMD\n");

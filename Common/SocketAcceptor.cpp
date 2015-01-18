@@ -37,6 +37,9 @@ inline INT g_AcceptToAsyncSocketStream(SOCKET hListenSocket, PAsyncSocketStream 
 			g_SetErrorCode(pErrorCode, nErrorCode);
 			goto Exit0;
 		}
+
+        g_SetSocketNonBlock(hRemoteSocket, pErrorCode);
+
 		pAsyncSocketStream = ::new AsyncSocketStream();
 		PROCESS_ERROR(NULL != pAsyncSocketStream);
 
