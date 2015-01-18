@@ -177,12 +177,11 @@ SimpleThread::SimpleThread()
 
 SimpleThread::~SimpleThread()
 {
-	ASSERT(!m_uThreadId);
+    Stop();
 }
 
 BOOL SimpleThread::Start(ThreadFun pFunction, VOID* pParam)
 {
-	printf(">>>>>>SimpleThread::Start\n");
 	ASSERT(!m_uThreadId && pFunction);
 	m_pFunction = pFunction;
 	m_pParam = pParam;
@@ -236,7 +235,6 @@ THREAD_FUNC_RET_TYPE SimpleThread::ThreadFunction(VOID* pParam)
 THREAD_FUNC_RET_TYPE SimpleThread::ThreadFunction(VOID* pParam)
 #endif //PLATFORM_OS_WINDOWS
 {
-	printf("<<<<<<<<<<<<<<SimpleThread::ThreadFunction(VOID* pParam)\n");
 	SimpleThread* pThread = (SimpleThread*)pParam;
 	(pThread->m_pFunction)(pThread->m_pParam);
 	return 0;

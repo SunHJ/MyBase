@@ -52,5 +52,6 @@ extern SOCKET	g_CreateTCPSocket();
 extern SOCKET	g_CreateUDPSocket();	  
 extern SOCKET	g_CreateListenSocket(CONST CHAR *cszIP, USHORT usPort, INT *pErrorCode = NULL);
 extern SOCKET	g_ConnectServerSocket(CPCCHAR cpcHostIP, USHORT usPort, INT *pErrorCode = NULL);
+extern INT g_SelectDataIn(SOCKET nSocket, CONST timeval *pcTimeouti = NULL);
 
 #endif

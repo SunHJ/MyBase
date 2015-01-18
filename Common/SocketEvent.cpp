@@ -44,6 +44,8 @@ BOOL AsyncSocketStreamQueue::SelectWait(INT nMaxEventCount, INT &nEventCount, SP
 
 	INT nReCode = 0;
 	timeval tmTimeOut;
+    tmTimeOut.tv_sec = 0;
+    tmTimeOut.tv_usec = 0;
 	size_t nStreamVectorLen = m_vecAsyncSocketStream.size();
 	if (m_nLastWaitToProcessPos >= nStreamVectorLen)
 		m_nLastWaitToProcessPos = 0;
@@ -62,7 +64,7 @@ BOOL AsyncSocketStreamQueue::SelectWait(INT nMaxEventCount, INT &nEventCount, SP
 		SP_ASYNC_STREAM_VECTOR::iterator iterTemp = iterNext++;
 
 		SPAsyncSocketStream spAsyncSocketStream = *iterTemp;
-		nReCode = g_CheckCanRecv(spAsyncSocketStream->GetSocket(), &tmTimeOut);
+		nReCode = g_SelectDataIn(spAsyncSocketStream->GetSocket(), &tmTimeOut);
 		if (1 == nReCode)
 		{
 			spEventArray[nEventCount].m_nEventType = ASYNC_SOCKET_EVENT_IN;

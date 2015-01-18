@@ -91,7 +91,37 @@ Exit0:
 	return nReturnSocket;
 }
 
-//Windows 涓?Linux 涓嶅悓瀹炵幇 
+// return -1: error, 0: timeout, 1: success
+INT g_SelectDataIn(SOCKET nSocket, CONST timeval *pcTimeout)
+{
+	if (INVALID_SOCKET == nSocket)
+		return -1;
+
+	fd_set FDSet;
+	FD_ZERO(&FDSet);
+	FD_SET(nSocket, &FDSet);
+
+	timeval  TempTimeout;
+	timeval *pTempTimeout = NULL;
+
+	if (pcTimeout)
+	{
+		TempTimeout = *pcTimeout;
+		pTempTimeout = &TempTimeout;
+	}
+
+	int nRetCode = ::select(nSocket + 1, &FDSet, NULL, NULL, pTempTimeout);
+
+	if (nRetCode == 0)
+		return 0;
+
+	if (nRetCode > 0)
+		return 1;
+
+	return -1;
+}
+
+//Windows 与 Linux 分别封装 
 #ifdef PLATFORM_OS_WINDOWS
 
 NetService::NetService() : m_lStarted(0)
