@@ -214,7 +214,7 @@ VOID SimpleThread::Stop()
     m_uThreadId = NULL;
 #else	 
 	ASSERT(m_uThreadId > 0);
-	void* pRet = NULL;
+	VOID* pRet = NULL;
 	::pthread_join(m_uThreadId, &pRet);
     m_uThreadId = 0;
 #endif //PLATFORM_OS_WINDOWS	   

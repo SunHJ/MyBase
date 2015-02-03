@@ -55,19 +55,19 @@ PVOID FixedSizeBuffer::GetLeftPtr() CONST
 	return static_cast<PVOID>(pLeft);
 }
 
-size_t FixedSizeBuffer::GetTotalSize() CONST
+size_t FixedSizeBuffer::GetSize()
 {
 	ASSERT(m_nTotalSize > 0);
 	return m_nTotalSize;
 }
 
-size_t FixedSizeBuffer::GetUsedSize() CONST
+size_t FixedSizeBuffer::GetUsedSize()
 {
 	ASSERT(m_nTotalSize>0 && m_nUsedSize<=m_nTotalSize);
 	return m_nUsedSize;
 }
 
-size_t FixedSizeBuffer::GetLeftSize() CONST
+size_t FixedSizeBuffer::GetLeftSize()
 {
 	ASSERT(m_nTotalSize>0 && m_nUsedSize<=m_nTotalSize);
 	return (m_nTotalSize-m_nUsedSize);

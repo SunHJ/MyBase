@@ -4,7 +4,15 @@
 #include "Type.h"
 #include "SharedPtr.h"
 
-class FixedSizeBuffer
+struct IBuffer
+{
+public:
+	virtual VOID    *GetData() = 0;
+	virtual size_t	GetSize() = 0;
+	virtual size_t	GetLeftSize() = 0;
+};
+
+class FixedSizeBuffer : public IBuffer
 {
 protected:
 	PVOID  m_pvData;            // ptr to the buffer
@@ -21,9 +29,9 @@ public:
 	PVOID  GetDataPtr(CONST size_t nPos = 0) CONST;
 	PVOID  GetLeftPtr() CONST;
 
-	size_t GetTotalSize() CONST;
-	size_t GetUsedSize()  CONST;
-	size_t GetLeftSize()  CONST;
+	size_t GetSize();
+	size_t GetUsedSize();
+	size_t GetLeftSize();
 
 	BOOL InsertDataIntoTail(CPCVOID cpcData, CONST size_t nDataBytes);
 	BOOL InsertDataIntoHead(CPCVOID cpcData, CONST size_t nDataBytes);

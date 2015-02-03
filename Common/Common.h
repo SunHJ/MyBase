@@ -11,5 +11,6 @@
 #include "LinkedList.h"
 #include "UniversalQueue.h"
 #include "SelecterServer.h"
+#include "SuperServer.h"
 
 #endif //__INCLUDE_COMMON_H__

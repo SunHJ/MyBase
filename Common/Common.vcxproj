@@ -106,7 +106,10 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClInclude Include="SocketAcceptor.h" />
     <ClInclude Include="SocketEvent.h" />
     <ClInclude Include="SocketStream.h" />
+    <ClInclude Include="SocketStreamBuffer.h" />
+    <ClInclude Include="SocketStreamQueue.h" />
     <ClInclude Include="SocketWrapper.h" />
+    <ClInclude Include="SuperServer.h" />
     <ClInclude Include="Thread.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="UniversalQueue.h" />
@@ -122,7 +125,11 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClCompile Include="SocketAcceptor.cpp" />
     <ClCompile Include="SocketEvent.cpp" />
     <ClCompile Include="SocketStream.cpp" />
+    <ClCompile Include="SocketStreamBuffer.cpp" />
+    <ClCompile Include="SocketStreamIocp.cpp" />
+    <ClCompile Include="SocketStreamQueue.cpp" />
     <ClCompile Include="SocketWrapper.cpp" />
+    <ClCompile Include="SuperServer.cpp" />
     <ClCompile Include="Thread.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

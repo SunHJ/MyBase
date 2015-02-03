@@ -3,35 +3,41 @@
 #include "Buffer.h"				 
 #include "Thread.h"		
 #include "Semaphore.h"
-#include "SocketEvent.h"
 #include "SocketAcceptor.h"
+#include "SocketStreamQueue.h"
 
 class SelecterServer
 {
+	static VOID WorkThreadFun(VOID* pParam);
 public:
 	SelecterServer();
 	~SelecterServer();
-	BOOL Start(STRING szIp, USHORT uPort);
+	BOOL Init(CONST STRING strIpAddress, CONST USHORT usPort);
+	VOID UnInit();
+	BOOL Start();
 	VOID Stop();
 
 	virtual INT GetClientCount();
-	virtual VOID ProcessNewConnect(SPAsyncSocketStream &spSocketStream);
-	virtual VOID ProcessNetMessage(SPAsyncSocketStream &spSocketStream);
-	virtual VOID ProcessClentClose(SPAsyncSocketStream &spSocketStream);
+	virtual VOID ProcessNewConnect(SPSocketStream &spSocketStream);
+	virtual VOID ProcessNetMessage(SPSocketStream &spSocketStream);
+	virtual VOID ProcessClentClose(SPSocketStream &spSocketStream);
 
 private:
-	static VOID WorkThreadFun(VOID* pParam);
-
 	VOID MainLoop();
+	BOOL _WaitClientAccept(INT nMaxEvenCount, INT &nEventCount, SPSocketEventArray spEventArray);
 
 private:
-	BOOL m_bStop;
+	BOOL			m_bStop;
 	Semaphore		m_SemStop;
-	SimpleThread	m_cThread;			 
-	SPDynamicBuffer				m_spBuffer;
-	SPNonBlockSocketAcceptor	m_spSocketAcceptor;
-	SPAsyncSocketStreamQueue	m_spConnectSocket;
-	SPAsyncSocketEventArray		m_spEventArray;  
+	SimpleThread	m_cThread;		
+	SPDynamicBuffer	m_spBuffer;
+
+private:
+	SOCKET				m_hListenSocket;
+	STRING				m_strIpAddress;
+	USHORT				m_usPort;
+	SPSocketEventArray	m_spEventArray;
+	SPSocketStreamQueue	m_spConnectSocket;
 };
 
 #endif //__NET_SELECTER_SERVER_H__

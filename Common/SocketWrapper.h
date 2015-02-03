@@ -19,6 +19,12 @@
 #define MAX_BACK_LOG_NUM 8
 
 #ifdef PLATFORM_OS_WINDOWS
+typedef int SockLen;
+#else
+typedef socklen_t SockLen;
+#endif // PLATFORM_OS_WINDOWS
+
+#ifdef PLATFORM_OS_WINDOWS
 class NetService : UnCopyable
 {
 	DECLARE_SINGLETON_PATTERN(NetService);
@@ -52,6 +58,6 @@ extern SOCKET	g_CreateTCPSocket();
 extern SOCKET	g_CreateUDPSocket();	  
 extern SOCKET	g_CreateListenSocket(CONST CHAR *cszIP, USHORT usPort, INT *pErrorCode = NULL);
 extern SOCKET	g_ConnectServerSocket(CPCCHAR cpcHostIP, USHORT usPort, INT *pErrorCode = NULL);
-extern INT g_SelectDataIn(SOCKET nSocket, CONST timeval *pcTimeouti = NULL);
+extern INT		g_SelectDataIn(SOCKET nSocket, CONST timeval *pcTimeouti = NULL);
 
 #endif

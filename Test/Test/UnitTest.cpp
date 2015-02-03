@@ -140,8 +140,10 @@ void Test_Buffer()
 
 extern void Test_Net()
 {
-	SelecterServer server;
-	server.Start("", 1234);
+	//SelecterServer server;
+	SuperServer server;
+	server.Init("", 1234);
+	server.Start();
 	char cType = 0;
 	while (true)
 	{

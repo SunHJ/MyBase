@@ -32,7 +32,7 @@ BOOL File::Open(CPCCHAR cpcFile, CPCCHAR cpcMode)
 
 BOOL File::Close()
 {
-    int nRetCode = 0;
+    INT nRetCode = 0;
     CHECK_RETURN_BOOL(m_hFile);
 
 	nRetCode = g_CloseFile(m_hFile);
@@ -65,7 +65,7 @@ LONG File::Size() CONST
 
 BOOL File::SeekBegin(LONG lOffset)
 {
-    int nRetCode = 0;
+    INT nRetCode = 0;
 
     CHECK_RETURN_BOOL(lOffset <= Size());
 
@@ -77,7 +77,7 @@ BOOL File::SeekBegin(LONG lOffset)
 
 BOOL File::SeekEnd(LONG lOffset)
 {
-    int nRetCode = 0;
+    INT nRetCode = 0;
 
     CHECK_RETURN_BOOL(lOffset >= 0);
 
@@ -89,7 +89,7 @@ BOOL File::SeekEnd(LONG lOffset)
 
 BOOL File::SeekCurrent(LONG lOffset)
 {
-    int nRetCode = 0;
+    INT nRetCode = 0;
 
     CHECK_RETURN_BOOL(m_hFile);
 
@@ -130,7 +130,7 @@ BOOL File::IsOpen() CONST
 BOOL File::Flush()
 {
 	CHECK_RETURN_BOOL(m_hFile);
-	int nRetCode = ::fflush(m_hFile);
+	INT nRetCode = ::fflush(m_hFile);
 	CHECK_RETURN_BOOL(nRetCode == 0);
 
 	return TRUE;

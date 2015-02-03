@@ -5,58 +5,43 @@
 #include "SharedPtr.h"
 #include "SocketEvent.h"
 #include "SocketWrapper.h"
-#include "SocketStream.h"
-
-// 1  : indicates sucess
-// 0  : non waiting connection or operations will complete later
-// -1 : accept failed. this indicates a serious system error
-extern inline INT g_AcceptToAsyncSocketStream(
-	SOCKET hListenSocket,                           // listen socket
-	PAsyncSocketStream &pAsyncSocketStream,         // async socket stream pointer
-	INT *pErrorCode = NULL                          // error code
-	);
-
-// use smart pointer
-extern inline INT g_AcceptToAsyncSocketStream(
-	SOCKET hListenSocket,                           // listen socket
-	SPAsyncSocketStream spAsyncSocketStream,        // async socket stream pointer
-	INT *pErrorCode = NULL                          // error code
-	);
+#include "SocketStreamQueue.h"
 
 class NonBlockSocketAcceptor : private UnCopyable
 {
 private:
-	SOCKET m_hListenSocket;
-	STRING m_strIpAddress;
-	USHORT m_usPort;
+	INT		m_nEpollHandle;
+	SOCKET	m_hListenSocket;
+	STRING	m_strIpAddress;
+	USHORT	m_usPort;
 
 	SPAsyncSocketStreamQueue m_spSocketStreamQueue;
+
+#ifdef PLATFORM_OS_LINUX
+	VecSocketEvent	m_SocketEventVector;
+#endif // PLATFORM_OS_LINUX		
 
 public:
 	NonBlockSocketAcceptor();
 	~NonBlockSocketAcceptor();
 
-	BOOL Init(
-		CONST STRING &strIpAddress,
-		CONST USHORT &usPort
-		);
-
+	BOOL Init(CONST STRING &strIpAddress, CONST USHORT &usPort);
+	BOOL Wait(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);
 	BOOL AttachSocketStreamQueue(SPAsyncSocketStreamQueue &spQueue);
-
-	BOOL WaitAccept(
-		INT nMaxEventCount,
-		INT &nEventCount,
-		SPAsyncSocketEventArray spEventArray
-		);
-
 	BOOL UnInit();
 
+	USHORT GetServerPort() CONST{ return m_usPort; }
+
 private:
-	BOOL WaitProcessAccept(
-		INT nMaxEventCount,
-		INT &nEventCount,
-		SPAsyncSocketEventArray spEventArray
-		);
+	BOOL WaitProcessAccept(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);
+	BOOL WaitClientRequet(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);
+
+	BOOL _AcceptToAsyncSocketStream(PAsyncSocketStream &pAsyncSocketStream, INT *pErrorCode /* = NULL */);
+// #ifdef PLATFORM_OS_WINDOWS
+// 	BOOL _WaitProcessOrDestory(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);
+// #else
+// 	BOOL _WaitProcessRecv(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);
+// #endif // PLATFORM_OS_WINDOWS
 };
 
 typedef NonBlockSocketAcceptor * PNonBlockSocketAcceptor;

@@ -95,6 +95,15 @@
     <ClInclude Include="FrameControl.h">
       <Filter>Structure</Filter>
     </ClInclude>
+    <ClInclude Include="SuperServer.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketStreamQueue.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketStreamBuffer.h">
+      <Filter>Net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Thread.cpp">
@@ -132,6 +141,18 @@
     </ClCompile>
     <ClCompile Include="FrameControl.cpp">
       <Filter>Structure</Filter>
+    </ClCompile>
+    <ClCompile Include="SuperServer.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketStreamQueue.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketStreamBuffer.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketStreamIocp.cpp">
+      <Filter>Net</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

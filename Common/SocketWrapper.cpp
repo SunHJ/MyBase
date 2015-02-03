@@ -23,7 +23,7 @@ SOCKET g_CreateListenSocket(CONST CHAR *cszIP, USHORT usPort, INT *pErrorCode)
 {
 	SOCKET nListenSocket = g_CreateTCPSocket();
 	ULONG ulAddress = INADDR_ANY;
-	int nOptVal = 1, nRetCode = 0;
+	INT nOptVal = 1, nRetCode = 0;
 	sockaddr_in saLocalAddr;
 
 	PROCESS_ERROR(INVALID_SOCKET != nListenSocket);
@@ -110,7 +110,7 @@ INT g_SelectDataIn(SOCKET nSocket, CONST timeval *pcTimeout)
 		pTempTimeout = &TempTimeout;
 	}
 
-	int nRetCode = ::select(nSocket + 1, &FDSet, NULL, NULL, pTempTimeout);
+	INT nRetCode = ::select(nSocket + 1, &FDSet, NULL, NULL, pTempTimeout);
 
 	if (nRetCode == 0)
 		return 0;
@@ -177,7 +177,8 @@ INT g_IsSocketWouldBlock()
 	INT nLastError = ::WSAGetLastError();
 	return (
 		(WSAEWOULDBLOCK == nLastError) ||
-		(WSA_IO_PENDING == nLastError)
+		(WSA_IO_PENDING == nLastError) || 
+		(WSA_IO_INCOMPLETE == nLastError)
 		);
 }
 
@@ -200,7 +201,7 @@ INT g_CheckCanRecv(SOCKET nSocket, CONST timeval *pcTimeout)
 		pTempTimeout = &TempTimeout;
 	}
 
-	int nRetCode = ::select(nSocket + 1, &FDSet, NULL, NULL, pTempTimeout);
+	INT nRetCode = ::select(nSocket + 1, &FDSet, NULL, NULL, pTempTimeout);
 
 	if (nRetCode == 0)
 		return 0;
@@ -231,7 +232,7 @@ INT g_CheckCanSend(SOCKET nSocket, CONST timeval *pcTimeout)
 		pTempTimeout = &TempTimeout;
 	}
 
-	int nRetCode = select(nSocket + 1, NULL, &FDSet, NULL, pTempTimeout);
+	INT nRetCode = select(nSocket + 1, NULL, &FDSet, NULL, pTempTimeout);
 
 	if (nRetCode == 0)
 		return 0;
@@ -322,7 +323,7 @@ INT g_CheckCanRecv(SOCKET nSocket, CONST timeval *pcTimeout)
 	if (INVALID_SOCKET == nSocket)
 		return -1;
 
-	int nTimeout = -1;
+	INT nTimeout = -1;
 	if (pcTimeout)
 	{
 		nTimeout = (pcTimeout->tv_sec * 1000) + (pcTimeout->tv_usec / 1000);
@@ -333,7 +334,7 @@ INT g_CheckCanRecv(SOCKET nSocket, CONST timeval *pcTimeout)
 	PollFD.events  = POLLIN;
 	PollFD.revents = 0;
 
-	int nRetCode = ::poll(&PollFD, 1, nTimeout);
+	INT nRetCode = ::poll(&PollFD, 1, nTimeout);
 
 	if (nRetCode == 0)
 		return 0;
@@ -358,7 +359,7 @@ INT g_CheckCanSend(SOCKET nSocket, CONST timeval *pcTimeout)
 	if (INVALID_SOCKET == nSocket)
 		return -1;
 
-	int nTimeout = -1;
+	INT nTimeout = -1;
 	if (pcTimeout)
 	{
 		nTimeout = (pcTimeout->tv_sec * 1000) + (pcTimeout->tv_usec / 1000);
@@ -369,7 +370,7 @@ INT g_CheckCanSend(SOCKET nSocket, CONST timeval *pcTimeout)
 	PollFD.events  = POLLOUT;
 	PollFD.revents = 0;
 
-	int nRetCode = poll(&PollFD, 1, nTimeout);
+	INT nRetCode = poll(&PollFD, 1, nTimeout);
 
 	if (nRetCode == 0)
 		return 0;
@@ -407,8 +408,8 @@ BOOL g_CloseSocket(SOCKET &s)
 
 BOOL g_SetSocketNonBlock(SOCKET &s, INT *pErrorCode)
 { 
-	int nRetCode = 0;
-	int nOption  = 0;
+	INT nRetCode = 0;
+	INT nOption  = 0;
 
 	nOption = ::fcntl(s, F_GETFL, 0);
 	nRetCode = ::fcntl(s, F_SETFL, nOption | O_NONBLOCK);
@@ -449,4 +450,5 @@ Exit0:
 	g_SetErrorCode(pErrorCode, g_GetSocketLastError());
 	return FALSE;
 }
+
 #endif //PLATFORM_OS_WINDOWS
