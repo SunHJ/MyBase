@@ -154,5 +154,8 @@
     <ClCompile Include="SocketStreamIocp.cpp">
       <Filter>Net</Filter>
     </ClCompile>
+    <ClCompile Include="SocketStreamEpoll.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

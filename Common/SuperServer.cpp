@@ -125,44 +125,43 @@ BOOL SuperServer::Activate()
 
 BOOL SuperServer::ProcessNetEvent()
 {
-	INT nErrorCode = 0;
+	INT nErrorCode = 0, nEventCount;
 	BOOL bLoopFlag = TRUE;
 	BOOL bRetCode = FALSE;
 
 	while (bLoopFlag)
 	{
-		INT nEventCount = 0;
-
-		m_spAcceptor->Wait(MAX_SOCKET_EVENT, nEventCount, m_spEventArray);
+		nEventCount = 0;   
+		m_spAcceptor->Wait(nEventCount, m_spEventArray);
 
 		if (0 == nEventCount)   // no event
 			break;
 
 		for (INT i = 0; i < nEventCount; i++)
 		{
-			SPAsyncSocketStream &spAsyncSocketStream = m_spEventArray[i].m_spAsyncSocketStream;
+			PAsyncSocketStream &pAsyncSocketStream = m_spEventArray[i].m_pAsyncSocketStream;
 			switch (m_spEventArray[i].m_nEventType)
 			{
 			case SOCKET_EVENT_ACCEPT:
 				{
-					ProcessNewConnect(spAsyncSocketStream);
+					ProcessNewConnect(pAsyncSocketStream);
 #ifdef PLATFORM_OS_WINDOWS
-					bRetCode = spAsyncSocketStream->TryToActiveNextRecv();
+					bRetCode = pAsyncSocketStream->TryToActiveNextRecv();
 					if (-1 == bRetCode)
 					{
-						ProcessClentClose(spAsyncSocketStream);
+						ProcessClentClose(pAsyncSocketStream);
 					}
 #endif // PLATFORM_OS_WINDOWS
 				}
 				break;
 			case SOCKET_EVENT_IN:
 				{
-					ProcessAllCompletePackage(spAsyncSocketStream);
+					ProcessAllCompletePackage(pAsyncSocketStream);
 				}
 				break;
 			case SOCKET_EVENT_CLOSE:
 				{
-					ProcessClentClose(spAsyncSocketStream);
+					ProcessClentClose(pAsyncSocketStream);
 				}
 				break;
 			default:
@@ -175,7 +174,7 @@ BOOL SuperServer::ProcessNetEvent()
 	return TRUE;
 }
 
-BOOL SuperServer::ProcessAllCompletePackage(SPAsyncSocketStream &spAsyncSocketStream)
+BOOL SuperServer::ProcessAllCompletePackage(PAsyncSocketStream &pAsyncSocketStream)
 {
 	INT nErrorCode = 0;
 	BOOL bResult = TRUE;
@@ -185,16 +184,16 @@ BOOL SuperServer::ProcessAllCompletePackage(SPAsyncSocketStream &spAsyncSocketSt
 	while (bLoopFlag)
 	{
 		m_spDataBuffer->Reset();
-		bRetCode = spAsyncSocketStream->Recv(m_spDataBuffer, &nErrorCode);
+		bRetCode = pAsyncSocketStream->Recv(m_spDataBuffer, &nErrorCode);
 		if (1 == bRetCode)
 		{
-			ProcessNetMessage(spAsyncSocketStream, m_spDataBuffer);
+			ProcessNetMessage(pAsyncSocketStream, m_spDataBuffer);
 		}
 
 		if (-1 == bRetCode)
 		{// a serious error was occured
-			ProcessClentClose(spAsyncSocketStream);
-			m_spStreamQueue->DelClient(spAsyncSocketStream);
+			ProcessClentClose(pAsyncSocketStream);
+			m_spStreamQueue->DelClient(pAsyncSocketStream);
 			bResult = FALSE;
 			bLoopFlag = FALSE;
 		}
@@ -205,20 +204,20 @@ BOOL SuperServer::ProcessAllCompletePackage(SPAsyncSocketStream &spAsyncSocketSt
 	return TRUE;  
 }
 
-VOID SuperServer::ProcessNewConnect(SPAsyncSocketStream &spSocketStream)
+VOID SuperServer::ProcessNewConnect(PAsyncSocketStream &pSocketStream)
 {
-	printf("new client(%s:%d) in...\n", spSocketStream->GetRemoteIp().c_str(), spSocketStream->GetRemotePort());
+	printf("new client(%s:%d) in...\n", pSocketStream->GetRemoteIp().c_str(), pSocketStream->GetRemotePort());
 	/*		*********		*********		*********		*********		*********		*********		*********/
 }
 
-VOID SuperServer::ProcessNetMessage(SPAsyncSocketStream &spSocketStream, SPDynamicBuffer &spBuffer)
+VOID SuperServer::ProcessNetMessage(PAsyncSocketStream &pSocketStream, SPDynamicBuffer &spBuffer)
 {
-	printf("client(%s %d) Msg in DataSize:%d\n", spSocketStream->GetRemoteIp().c_str(), spSocketStream->GetRemotePort(), spBuffer->GetUsedSize());
+	printf("client(%s %d) Msg in DataSize:%d\n", pSocketStream->GetRemoteIp().c_str(), pSocketStream->GetRemotePort(), spBuffer->GetUsedSize());
 	/*		*********		*********		*********		*********		*********		*********		*********/
 }
 
-VOID SuperServer::ProcessClentClose(SPAsyncSocketStream &spSocketStream)
+VOID SuperServer::ProcessClentClose(PAsyncSocketStream &pSocketStream)
 {
-	printf("client(%s %d) close\n", spSocketStream->GetRemoteIp().c_str(), spSocketStream->GetRemotePort());
+	printf("client(%s %d) close\n", pSocketStream->GetRemoteIp().c_str(), pSocketStream->GetRemotePort());
 	/*		*********		*********		*********		*********		*********		*********		*********/
 }

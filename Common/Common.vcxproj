@@ -126,6 +126,7 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClCompile Include="SocketEvent.cpp" />
     <ClCompile Include="SocketStream.cpp" />
     <ClCompile Include="SocketStreamBuffer.cpp" />
+    <ClCompile Include="SocketStreamEpoll.cpp" />
     <ClCompile Include="SocketStreamIocp.cpp" />
     <ClCompile Include="SocketStreamQueue.cpp" />
     <ClCompile Include="SocketWrapper.cpp" />

@@ -1,8 +1,8 @@
 #ifndef __NET_SOCKET_ACCEPTOR_H__
 #define __NET_SOCKET_ACCEPTOR_H__
 
-/*#include "Type.h"*/
-#include "SharedPtr.h"
+#include "SharedPtr.h"	
+#include "Semaphore.h"
 #include "SocketEvent.h"
 #include "SocketWrapper.h"
 #include "SocketStreamQueue.h"
@@ -10,23 +10,17 @@
 class NonBlockSocketAcceptor : private UnCopyable
 {
 private:
-	INT		m_nEpollHandle;
-	SOCKET	m_hListenSocket;
 	STRING	m_strIpAddress;
+	SOCKET	m_hListenSocket;
 	USHORT	m_usPort;
 
 	SPAsyncSocketStreamQueue m_spSocketStreamQueue;
-
-#ifdef PLATFORM_OS_LINUX
-	VecSocketEvent	m_SocketEventVector;
-#endif // PLATFORM_OS_LINUX		
-
 public:
 	NonBlockSocketAcceptor();
 	~NonBlockSocketAcceptor();
 
 	BOOL Init(CONST STRING &strIpAddress, CONST USHORT &usPort);
-	BOOL Wait(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);
+	BOOL Wait(INT &nEventCount, SPAsyncSocketEventArray spEventArray);
 	BOOL AttachSocketStreamQueue(SPAsyncSocketStreamQueue &spQueue);
 	BOOL UnInit();
 
@@ -37,11 +31,24 @@ private:
 	BOOL WaitClientRequet(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);
 
 	BOOL _AcceptToAsyncSocketStream(PAsyncSocketStream &pAsyncSocketStream, INT *pErrorCode /* = NULL */);
-// #ifdef PLATFORM_OS_WINDOWS
-// 	BOOL _WaitProcessOrDestory(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);
-// #else
-// 	BOOL _WaitProcessRecv(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);
-// #endif // PLATFORM_OS_WINDOWS
+
+#ifdef PLATFORM_OS_LINUX   
+public:
+	VOID MainLoopRecv();
+
+private:
+	BOOL m_bLoopFlag;
+	SimpleThread	m_cRecvThread;
+
+	INT		m_nEpollHandle;
+	BOOL _EpollWaitProcess(INT nMaxEventCount);		    
+	struct epoll_event m_EpollEvents[MAX_SOCKET_EVENT];
+
+	INT m_nHeadPos;
+	INT m_nTailPos;
+	Semaphore m_Semap;
+	PAsyncSocketStream WaitQueue[MAX_SOCKET_EVENT];
+#endif // PLATFORM_OS_LINUX
 };
 
 typedef NonBlockSocketAcceptor * PNonBlockSocketAcceptor;

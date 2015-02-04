@@ -5,8 +5,7 @@
 #include "Thread.h"
 #include "SocketEvent.h"
 #include "SocketStream.h"
-#include "SocketAcceptor.h"
-
+#include "SocketAcceptor.h"		   
 
 class SuperServer
 {
@@ -29,11 +28,11 @@ public:
 private:
 	BOOL Activate();
 	BOOL ProcessNetEvent();
-	BOOL ProcessAllCompletePackage(SPAsyncSocketStream &spAsyncSocketStream);
+	BOOL ProcessAllCompletePackage(PAsyncSocketStream &spAsyncSocketStream);
 
-	virtual VOID ProcessNewConnect(SPAsyncSocketStream &spAsyncSocketStream);
-	virtual VOID ProcessNetMessage(SPAsyncSocketStream &spAsyncSocketStream, SPDynamicBuffer &spBuffer);
-	virtual VOID ProcessClentClose(SPAsyncSocketStream &spAsyncSocketStream);
+	virtual VOID ProcessNewConnect(PAsyncSocketStream &spAsyncSocketStream);
+	virtual VOID ProcessNetMessage(PAsyncSocketStream &spAsyncSocketStream, SPDynamicBuffer &spBuffer);
+	virtual VOID ProcessClentClose(PAsyncSocketStream &spAsyncSocketStream);
 
 private:
 	BOOL			m_bLoopFlag;

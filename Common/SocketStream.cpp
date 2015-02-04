@@ -165,17 +165,17 @@ SOCKET SocketStream::GetSocket() CONST
 // class AsyncSocketStream begin
 AsyncSocketStream::AsyncSocketStream()
 {
-	m_hRemoteSocket		 = INVALID_SOCKET;
-	m_strRemoteIp		 = "";
-	m_usRemotePort = 0;
 	m_bNeedToCloseFlag = FALSE;
 	m_bRecvCompletedFlag = FALSE;
 
-#ifdef PLATFORM_OS_WINDOWS
-	m_nRecvCompletedSize		= 0;
-	m_nRecvCompletedErrorCode	= 0;	   
-#endif // PLATFORM_OS_WINDOWS
+	m_strRemoteIp = "";
+	m_usRemotePort = 0;
+	m_hRemoteSocket	= INVALID_SOCKET;
 
+#ifdef PLATFORM_OS_WINDOWS
+	m_nRecvSize		= 0;
+	m_nRecvErrorCode	= 0;	   
+#endif // PLATFORM_OS_WINDOWS		  
 }
 
 AsyncSocketStream::~AsyncSocketStream()
@@ -206,8 +206,8 @@ BOOL AsyncSocketStream::Init(SOCKET& hRemoteSocket, STRING strRemoteIp, USHORT u
 	m_bRecvCompletedFlag = FALSE;
 
 #ifdef PLATFORM_OS_WINDOWS
-	m_nRecvCompletedSize = 0;
-	m_nRecvCompletedErrorCode = 0;
+	m_nRecvSize = 0;
+	m_nRecvErrorCode = 0;
 #endif // PLATFORM_OS_WINDOWS
 	bResult = TRUE;
 
@@ -239,11 +239,16 @@ BOOL AsyncSocketStream::UnInit()
 	m_bRecvCompletedFlag = FALSE;
 
 #ifdef PLATFORM_OS_WINDOWS
-	m_nRecvCompletedSize = 0;
-	m_nRecvCompletedErrorCode = 0;
+	m_nRecvSize = 0;
+	m_nRecvErrorCode = 0;
 #endif // PLATFORM_OS_WINDOWS
 
 	return TRUE;
+}
+
+SOCKET AsyncSocketStream::GetSocket() CONST
+{
+	return m_hRemoteSocket;
 }
 
 STRING AsyncSocketStream::GetRemoteIp() CONST

@@ -109,31 +109,40 @@ AsyncSocketStreamQueue::~AsyncSocketStreamQueue()
 	CloseAll();
 }
 
-BOOL AsyncSocketStreamQueue::AddClient(SPAsyncSocketStream &spAsyncSocketStream)
+BOOL AsyncSocketStreamQueue::AddClient(PAsyncSocketStream &pAsyncSocketStream)
 {
-	m_vecSocketStream.push_back(spAsyncSocketStream);
+	m_vecSocketStream.push_back(pAsyncSocketStream);
 	return TRUE;
 }
 
-BOOL AsyncSocketStreamQueue::DelClient(SPAsyncSocketStream &spAsyncSocketStream)
+BOOL AsyncSocketStreamQueue::DelClient(PAsyncSocketStream &pAsyncSocketStream)
 {
-	VecSPAsyncSocketStream::iterator iterBegin = m_vecSocketStream.begin();
-	VecSPAsyncSocketStream::iterator iterEnd = m_vecSocketStream.end();
-	VecSPAsyncSocketStream::iterator iter = std::find(iterBegin, iterEnd, spAsyncSocketStream);
+	VecPAsyncSocketStream::iterator iterBegin = m_vecSocketStream.begin();
+	VecPAsyncSocketStream::iterator iterEnd = m_vecSocketStream.end();
+	VecPAsyncSocketStream::iterator iter = std::find(iterBegin, iterEnd, pAsyncSocketStream);
+
 	if (iter != iterEnd)
+	{
 		m_vecSocketStream.erase(iter);
+		g_SafelyDeletePtr(pAsyncSocketStream);
+	}
+
 	return TRUE;
 }
 
 VOID AsyncSocketStreamQueue::CloseAll()
 {
-	VecSPAsyncSocketStream::iterator iterBegin = m_vecSocketStream.begin();
-	VecSPAsyncSocketStream::iterator iterEnd = m_vecSocketStream.end();
+	VecPAsyncSocketStream::iterator iterBegin = m_vecSocketStream.begin();
+	VecPAsyncSocketStream::iterator iterEnd = m_vecSocketStream.end();
 
-	SPAsyncSocketStream spSocketStream;
+	PAsyncSocketStream pSocketStream;
 	while (iterBegin != iterEnd)
 	{
-		(*iterBegin)->Close();
+		pSocketStream = (*iterBegin);
+		
+		pSocketStream->Close();
+		g_SafelyDeletePtr(pSocketStream);
+
 		iterBegin++;
 	}
 	m_vecSocketStream.clear();
@@ -144,22 +153,7 @@ size_t AsyncSocketStreamQueue::GetCurStreamVectorLen() CONST
 	return m_vecSocketStream.size();
 }
 
-BOOL AsyncSocketStreamQueue::Wait(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray, INT nEpollHandle/* = -1*/)
-{
-	BOOL bRetCode = FALSE;
-#ifdef PLATFORM_OS_WINDOWS
-	bRetCode = _WaitProcessRecvOrClose(nMaxEventCount, nEventCount, spEventArray);
-#else
-	bRetCode = _WaitProcessRecv(nMaxEventCount, nEventCount, spEventArray, nEpollHandle);
-#endif // PLATFORM_OS_WINDOWS		  
-	PROCESS_ERROR(bRetCode);
-	bRetCode = TRUE;
-Exit0:
-	return bRetCode;
-}
-
-#ifdef PLATFORM_OS_WINDOWS
-BOOL AsyncSocketStreamQueue::_WaitProcessRecvOrClose(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray)
+BOOL AsyncSocketStreamQueue::Wait(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray)
 {
 	CHECK_RETURN_BOOL(nMaxEventCount > 0 && spEventArray && nEventCount <= nMaxEventCount);
 
@@ -171,9 +165,9 @@ BOOL AsyncSocketStreamQueue::_WaitProcessRecvOrClose(INT nMaxEventCount, INT &nE
 	if (m_nLastWaitToProcessPos >= nStreamVectorLen)
 		m_nLastWaitToProcessPos = 0;
 
-	VecSPAsyncSocketStream::iterator iterBegin = m_vecSocketStream.begin();
-	VecSPAsyncSocketStream::iterator iterEnd = m_vecSocketStream.end();
-	VecSPAsyncSocketStream::iterator iterNext = iterBegin;
+	VecPAsyncSocketStream::iterator iterBegin = m_vecSocketStream.begin();
+	VecPAsyncSocketStream::iterator iterEnd = m_vecSocketStream.end();
+	VecPAsyncSocketStream::iterator iterNext = iterBegin;
 	std::advance(iterNext, m_nLastWaitToProcessPos);
 
 	size_t nToProcessEventCount = nStreamVectorLen;
@@ -188,40 +182,31 @@ BOOL AsyncSocketStreamQueue::_WaitProcessRecvOrClose(INT nMaxEventCount, INT &nE
 		if (iterNext == iterEnd)
 			iterNext = iterBegin;
 
-		
-		VecSPAsyncSocketStream::iterator iterTemp = iterNext++;
-		SPAsyncSocketStream spAsyncSocketStream = *iterTemp;
-		ASSERT(spAsyncSocketStream);
+		VecPAsyncSocketStream::iterator iterTemp = iterNext++;
+		PAsyncSocketStream pAsyncSocketStream = (*iterTemp);
+		ASSERT(pAsyncSocketStream);
 
 		evType = SOCKET_EVENT_INVALID;
-		if (spAsyncSocketStream->IsNeedToClose())
+
+		if (pAsyncSocketStream->IsNeedToClose())
 		{
 			evType = SOCKET_EVENT_CLOSE;
 		}
-		if (spAsyncSocketStream->IsRecvCompleted())
+		else if (pAsyncSocketStream->IsRecvCompleted())
 		{
 			evType = SOCKET_EVENT_IN;
 		}
+
 		if (evType != SOCKET_EVENT_INVALID)
 		{
 			spEventArray[nEventCount].m_nEventType = evType;
-			spEventArray[nEventCount].m_spAsyncSocketStream = spAsyncSocketStream;
+			spEventArray[nEventCount].m_pAsyncSocketStream = pAsyncSocketStream;
 			nEventCount++;
 		}
 	}
 	// 保存当前等待处理节点位置，下次优先处理
 	m_nLastWaitToProcessPos = std::distance(iterBegin, iterNext);
 	return TRUE;
-}	
-#else	 
-BOOL AsyncSocketStreamQueue::_WaitProcessRecv(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray, INT nEpollHandle /*= -1*/)
-{
-	BOOL bResult = FALSE;
-	INT nRetCode = 0, nRemainEventCount = 0;	
-	struct epoll_event* pEpollEvent = NULL;
-
 }
-#endif // PLATFORM_OS_WINDOWS
-
 
 

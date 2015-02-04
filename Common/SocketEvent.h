@@ -39,7 +39,7 @@ struct AsyncSocketEvent
 {
 public:
 	SocketEventType		m_nEventType;
-	SPAsyncSocketStream m_spAsyncSocketStream;
+	PAsyncSocketStream	m_pAsyncSocketStream;
 
 public:
 	AsyncSocketEvent();

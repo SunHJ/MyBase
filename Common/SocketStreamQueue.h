@@ -34,23 +34,19 @@ public:
 	AsyncSocketStreamQueue();
 	~AsyncSocketStreamQueue();
 
-	BOOL AddClient(SPAsyncSocketStream &spAsyncSocketStream);
-	BOOL DelClient(SPAsyncSocketStream &spAsyncSocketStream);
-	BOOL Wait(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray, INT nEpollHandle = -1);
+	BOOL AddClient(PAsyncSocketStream &pAsyncSocketStream);
+	BOOL DelClient(PAsyncSocketStream &pAsyncSocketStream);
+	BOOL Wait(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);
 
 	VOID CloseAll();
 	size_t GetCurStreamVectorLen() CONST;
+
 private:
 	size_t	m_nLastWaitToProcessPos;
-	VecSPAsyncSocketStream m_vecSocketStream;
-
-#ifdef PLATFORM_OS_WINDOWS
-	BOOL _WaitProcessRecvOrClose(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);
-#else
-	BOOL _WaitProcessRecv(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray, INT nEpollHandle = -1);
-#endif // PLATFORM_OS_WINDOWS	
+	VecPAsyncSocketStream m_vecSocketStream;
 };
 typedef AsyncSocketStreamQueue *PAsyncSocketStreamQueue;
 typedef SharedPtr<AsyncSocketStreamQueue> SPAsyncSocketStreamQueue;
 
-#endif
+#endif // __NET_SOCKET_STREAM_QUEUE_H__
+

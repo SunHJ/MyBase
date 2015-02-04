@@ -8,7 +8,6 @@ INT AsyncSocketStream::Recv(SPDynamicBuffer &spBuffer, INT *pErrorCode)
 	INT nRetCode = 0;
 
 	PROCESS_ERROR(INVALID_SOCKET != m_hRemoteSocket);
-
 	PROCESS_ERROR(spBuffer);
 
 	g_SetErrorCode(pErrorCode, 0);
@@ -17,12 +16,12 @@ INT AsyncSocketStream::Recv(SPDynamicBuffer &spBuffer, INT *pErrorCode)
 	CHECK_RETURN_CODE_QUIET(FALSE != m_bRecvCompletedFlag, 0);
 
 	// inner system error occure
-	CHECK_RETURN_CODE_QUIET(0 == m_nRecvCompletedErrorCode, -1);
+	CHECK_RETURN_CODE_QUIET(0 == m_nRecvErrorCode, -1);
 
 	// need to close socket
 	CHECK_RETURN_CODE_QUIET(FALSE == m_bNeedToCloseFlag, 0);
 
-	m_spDataBuffer->AddUsedSize(m_nRecvCompletedSize);
+	m_spDataBuffer->AddUsedSize(m_nRecvSize);
 	nRetCode = m_spDataBuffer->GetPackage(spBuffer);
 	if (!nRetCode) // 没有完整的数据包
 	{
@@ -34,14 +33,16 @@ INT AsyncSocketStream::Recv(SPDynamicBuffer &spBuffer, INT *pErrorCode)
 		g_SetErrorCode(pErrorCode, 1);
 		nResult = 1;
 	}
+
 	// 进行下一次投递
 	nRetCode = TryToActiveNextRecv();
 	if (nRetCode == -1)
 	{
-		m_bNeedToCloseFlag = TRUE;
-		nResult = -1;
 		nRetCode = g_GetSocketLastError();
 		g_SetErrorCode(pErrorCode, nRetCode);
+
+		m_bNeedToCloseFlag = TRUE;
+		nResult = -1;
 	}
 
 Exit0:
@@ -60,9 +61,9 @@ INT AsyncSocketStream::TryToActiveNextRecv()
 		m_wsaBuffer.buf = (PCHAR)m_spDataBuffer->GetLeftPtr();	 
 
 		g_ZeroMemory(&m_wsaOverlapped, sizeof(m_wsaOverlapped));
-		m_nRecvCompletedErrorCode = 0;
-		m_nRecvCompletedSize = 0;
+		m_nRecvSize = 0;
 		m_bRecvCompletedFlag = FALSE;
+		m_nRecvErrorCode = 0;
 		dwRecv = 0;
 		dwFlags = 0;
 		nRetCode = ::WSARecv(m_hRemoteSocket, &m_wsaBuffer, 1, &dwRecv, &dwFlags, &m_wsaOverlapped, NULL);
@@ -71,15 +72,18 @@ INT AsyncSocketStream::TryToActiveNextRecv()
 			nRetCode = g_IsSocketCanRestore();
 			if (nRetCode)
 				continue;
+
 			nRetCode = g_IsSocketWouldBlock();
 			if (nRetCode)
 			{
 				nResult = 0;
 				PROCESS_ERROR_QUIET(FALSE);
 			}
+			// WSARecv 出现错误，需要关闭套接字
+			m_bNeedToCloseFlag = TRUE;
+			// 尽量处理完缓冲区中未处理的网络包
+			m_bRecvCompletedFlag = TRUE;
 			nResult = -1;
-			m_bRecvCompletedFlag = true;
-
 			PROCESS_ERROR(FALSE);
 		}
 		break;
@@ -93,8 +97,8 @@ Exit0:
 BOOL AsyncSocketStream::OnRecvCompleted(DWORD dwErrorCode, DWORD dwNumberOfBytesTransfered, LPOVERLAPPED lpOverlapped)
 {
 	UNREFERENCED_PARAMETER(lpOverlapped);
-	m_nRecvCompletedErrorCode = dwErrorCode;
-	m_nRecvCompletedSize = dwNumberOfBytesTransfered;
+	m_nRecvErrorCode = dwErrorCode;
+	m_nRecvSize = dwNumberOfBytesTransfered;
 	m_bRecvCompletedFlag = TRUE;
 	return TRUE;
 }
