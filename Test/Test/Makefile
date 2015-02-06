@@ -7,7 +7,7 @@ CC=g++ -g
 #AR=ar rc
 
 I_COMMON=-I../../Common/ -std=c++11
-L_COMMON=-lcommon -L $(lib_dir)
+L_COMMON=-L $(lib_dir) -lcommon
 #创建目录
 #$(shell mkdir -p $(lib_dir))
 $(shell mkdir -p $(bin_dir))
@@ -18,7 +18,7 @@ tag=test
 
 
 $(tag):$(obj)
-	$(CC) -o $(tag) $(obj) $(L_COMMON) -lpthread
+	$(CC) -o $(tag) $(obj) $(L_COMMON) -lpthread 
 	cp $(obj) $(obj_dir)
 	cp $(tag) $(bin_dir)
 

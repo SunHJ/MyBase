@@ -29,7 +29,7 @@ inline HANDLE_EVENT g_CreateEvent(BOOL bManualReset, BOOL bInitialState)
 	hEvent->m_bState = bInitialState;
 	hEvent->m_bManualReset = bManualReset;
 	nReCode = ::pthread_cond_init(&hEvent->m_cond, NULL);
-	PROCESS_ERROR(nReCode);
+    PROCESS_ERROR(0 == nReCode);
 #endif // PLATFORM_OS_WINDOWS
 	return hEvent;
 

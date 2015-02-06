@@ -169,7 +169,7 @@ BOOL AsyncSocketStreamQueue::Wait(INT nMaxEventCount, INT &nEventCount, SPAsyncS
 	VecPAsyncSocketStream::iterator iterEnd = m_vecSocketStream.end();
 	VecPAsyncSocketStream::iterator iterNext = iterBegin;
 	std::advance(iterNext, m_nLastWaitToProcessPos);
-
+//printf("AsyncSocketStreamQueue::Wait Begin %d %d\n", nEventCount, nStreamVectorLen);
 	size_t nToProcessEventCount = nStreamVectorLen;
 	SocketEventType evType = SOCKET_EVENT_INVALID; 
 	while (nToProcessEventCount--)
@@ -206,6 +206,7 @@ BOOL AsyncSocketStreamQueue::Wait(INT nMaxEventCount, INT &nEventCount, SPAsyncS
 	}
 	// 保存当前等待处理节点位置，下次优先处理
 	m_nLastWaitToProcessPos = std::distance(iterBegin, iterNext);
+//printf("AsyncSocketStreamQueue::Wait End %d %d\n", nEventCount, nStreamVectorLen);
 	return TRUE;
 }
 

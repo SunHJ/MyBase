@@ -4,21 +4,22 @@
 
 SuperServer::SuperServer()
 {
+#ifdef PLATFORM_OS_WINDOWS
 	SINGLETON_GET_PTR(NetService)->Strat();
-	
+	m_hThread = INVALID_HANDLE_VALUE;
+#endif // PLATFORM_OS_WINDOWS
+
 	m_bLoopFlag = FALSE;
 	m_threadID = 0;
 	m_spDataBuffer = SPDynamicBuffer(new DynamicBuffer());
-
-#ifdef PLATFORM_OS_WINDOWS
-	m_hThread = INVALID_HANDLE_VALUE;
-#endif // PLATFORM_OS_WINDOWS
 }
 
 
 SuperServer::~SuperServer()
 {
+#ifdef PLATFORM_OS_WINDOWS
 	SINGLETON_GET_PTR(NetService)->Stop();
+#endif
 
 	Stop();
 }
@@ -27,15 +28,19 @@ BOOL SuperServer::Init(CONST STRING &strIp, CONST USHORT &usPort)
 {					 
 	BOOL bRetCode = FALSE; 
 
-	PNonBlockSocketAcceptor pSocketAcceptor = ::new NonBlockSocketAcceptor();
+    PNonBlockSocketAcceptor pSocketAcceptor = NULL;
+    PAsyncSocketStreamQueue pSocketQueue = NULL;
+    PAsyncSocketEvent pSocketEvent = NULL;
+
+	pSocketAcceptor = ::new NonBlockSocketAcceptor();
 	PROCESS_ERROR(NULL != pSocketAcceptor);
 	m_spAcceptor = SPNonBlockSocketAcceptor(pSocketAcceptor);
 
-	PAsyncSocketStreamQueue pSocketQueue = ::new AsyncSocketStreamQueue();
+	pSocketQueue = ::new AsyncSocketStreamQueue();
 	PROCESS_ERROR(NULL != pSocketQueue);
 	m_spStreamQueue = SPAsyncSocketStreamQueue(pSocketQueue);
 
-	PAsyncSocketEvent pSocketEvent = new AsyncSocketEvent[MAX_SOCKET_EVENT];
+	pSocketEvent = new AsyncSocketEvent[MAX_SOCKET_EVENT];
 	PROCESS_ERROR(NULL != pSocketEvent);
 	m_spEventArray = SPAsyncSocketEventArray(pSocketEvent);
 
@@ -60,9 +65,9 @@ VOID SuperServer::UnInit()
 }
 
 #ifdef PLATFORM_OS_WINDOWS
-THREAD_FUNC_RET_TYPE __stdcall SuperServer::ThreadFunction(VOID *pValue)
+THREAD_FUNC_RET_TYPE WINAPI SuperServer::ThreadFunction(VOID *pValue)
 #else
-THREAD_FUNC_RET_TYPE KThread::ThreadFunction(VOID *pValue)
+THREAD_FUNC_RET_TYPE SuperServer::ThreadFunction(VOID *pValue)
 #endif // PLATFORM_OS_WINDOWS
 {
 	SuperServer* pThisAgency = (SuperServer*)pValue;
@@ -72,24 +77,18 @@ THREAD_FUNC_RET_TYPE KThread::ThreadFunction(VOID *pValue)
 BOOL SuperServer::Start()
 {
 	m_bLoopFlag = TRUE;
-	BOOL nResult = 0;
+    if (m_threadID <= 0)
+    {
 #ifdef PLATFORM_OS_WINDOWS
-	if (m_hThread <= 0 || INVALID_HANDLE_VALUE == m_hThread)
-	{
-		m_hThread = (HANDLE)::_beginthreadex(0, 0, ThreadFunction, (VOID *)this, 0, &m_threadID);
-	}
-	nResult = m_threadID > 0;
+		m_hThread = (HANDLE)::_beginthreadex(0, 0, SuperServer::ThreadFunction, (VOID *)this, 0, &m_threadID);
 #else
-	int iRetCode = 0;
-	if (m_threadID <= 0) {
-		iRetCode = ::pthread_create(&m_threadID, NULL, ThreadFunction, (VOID *)this);
-	}
-
-	nResult = nRetCode == 0;
+		::pthread_create(&m_threadID, NULL, SuperServer::ThreadFunction, (VOID *)this);
 #endif	//PLATFORM_OS_WINDOWS
+    }
+    CHECK_RETURN_BOOL(m_threadID > 0);
 
 	printf("SuperServer (Port:%d) Start Success \n", m_spAcceptor->GetServerPort());
-	return nResult;
+	return TRUE;
 }
 
 VOID SuperServer::Stop()
@@ -105,6 +104,7 @@ VOID SuperServer::Stop()
 #else
 	::pthread_cancel(m_threadID);
 #endif //PLATFORM_OS_WINDOWS
+    m_threadID = 0;
 }
 
 size_t SuperServer::GetClientCount()
@@ -184,7 +184,9 @@ BOOL SuperServer::ProcessAllCompletePackage(PAsyncSocketStream &pAsyncSocketStre
 	while (bLoopFlag)
 	{
 		m_spDataBuffer->Reset();
+        printf("pAsyncSocketStream Recv Begin \n");
 		bRetCode = pAsyncSocketStream->Recv(m_spDataBuffer, &nErrorCode);
+        printf(">%d %d\n", bRetCode, nErrorCode);
 		if (1 == bRetCode)
 		{
 			ProcessNetMessage(pAsyncSocketStream, m_spDataBuffer);
@@ -201,6 +203,7 @@ BOOL SuperServer::ProcessAllCompletePackage(PAsyncSocketStream &pAsyncSocketStre
 		if (0 == bRetCode)
 			break;
 	}
+    printf("ProcessAllCompletePackage %d\n", bRetCode);
 	return TRUE;  
 }
 
@@ -212,7 +215,11 @@ VOID SuperServer::ProcessNewConnect(PAsyncSocketStream &pSocketStream)
 
 VOID SuperServer::ProcessNetMessage(PAsyncSocketStream &pSocketStream, SPDynamicBuffer &spBuffer)
 {
-	printf("client(%s %d) Msg in DataSize:%d\n", pSocketStream->GetRemoteIp().c_str(), pSocketStream->GetRemotePort(), spBuffer->GetUsedSize());
+    INT nSize = static_cast<INT>(spBuffer->GetUsedSize());
+	printf("client(%s %d) Msg in DataSize:%zd\n", 
+            pSocketStream->GetRemoteIp().c_str(),
+            pSocketStream->GetRemotePort(), nSize);
+//            spBuffer->GetUsedSize());
 	/*		*********		*********		*********		*********		*********		*********		*********/
 }
 

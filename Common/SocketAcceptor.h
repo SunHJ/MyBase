@@ -2,7 +2,9 @@
 #define __NET_SOCKET_ACCEPTOR_H__
 
 #include "SharedPtr.h"	
+#include "Event.h"
 #include "Semaphore.h"
+#include "Thread.h"
 #include "SocketEvent.h"
 #include "SocketWrapper.h"
 #include "SocketStreamQueue.h"
@@ -47,6 +49,7 @@ private:
 	INT m_nHeadPos;
 	INT m_nTailPos;
 	Semaphore m_Semap;
+    ManualResetEvent m_Event;
 	PAsyncSocketStream WaitQueue[MAX_SOCKET_EVENT];
 #endif // PLATFORM_OS_LINUX
 };

@@ -55,7 +55,7 @@ VOID AsyncSocketStream::TryEpollRecv()
 		if (nMaxLen == 0)
 			break;
         pBuffer = (PCHAR)m_spDataBuffer->GetLeftPtr();
-		nRetCode = ::recv(m_hRemoteSocket, pBuffer, nMaxLen);
+		nRetCode = ::recv(m_hRemoteSocket, pBuffer, nMaxLen, 0);
 		if (SOCKET_ERROR == nRetCode)
 		{
 			if (g_IsSocketCanRestore())
@@ -87,8 +87,6 @@ Exit0:
 		m_bRecvCompletedFlag = TRUE;
 		m_nRecvSize = nRecvSize;
 	}
-
-	return nResult;
 }
 
 #endif // PLATFORM_OS_WINDOWS

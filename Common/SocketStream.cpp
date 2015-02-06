@@ -175,7 +175,8 @@ AsyncSocketStream::AsyncSocketStream()
 #ifdef PLATFORM_OS_WINDOWS
 	m_nRecvSize		= 0;
 	m_nRecvErrorCode	= 0;	   
-#endif // PLATFORM_OS_WINDOWS		  
+#endif // PLATFORM_OS_WINDOWS
+
 }
 
 AsyncSocketStream::~AsyncSocketStream()
@@ -187,8 +188,9 @@ BOOL AsyncSocketStream::Init(SOCKET& hRemoteSocket, STRING strRemoteIp, USHORT u
 {
 	INT nRetCode = 0, nErrorCode;
 	BOOL bResult = FALSE;
+    PSocketStreamBuffer pSocketBuffer = NULL;
+
 	PROCESS_ERROR(INVALID_SOCKET != hRemoteSocket);
-	//PROCESS_ERROR(0 == strRemoteIp.length());
 	PROCESS_ERROR(usRemotePort > 0);
 
 	m_hRemoteSocket = hRemoteSocket;
@@ -198,7 +200,7 @@ BOOL AsyncSocketStream::Init(SOCKET& hRemoteSocket, STRING strRemoteIp, USHORT u
 	nRetCode = g_SetSocketNonBlock(hRemoteSocket, &nErrorCode);
 	PROCESS_ERROR(nRetCode);
 
-	PSocketStreamBuffer pSocketBuffer = new SocketStreamBuffer(nMaxRecvSizePerSocket);
+	pSocketBuffer = new SocketStreamBuffer(nMaxRecvSizePerSocket);
 	m_spDataBuffer = SPSocketStreamBuffer(pSocketBuffer);
 	PROCESS_ERROR(m_spDataBuffer);
 
@@ -266,6 +268,7 @@ BOOL AsyncSocketStream::Send(SPDynamicBuffer &spBuffer, INT *pErrorCode)
 	BOOL bResult = FALSE;
 	WORD wDataSize = 0;
 	PCHAR pPackage = NULL;
+    size_t nPackageSize = 0;
 	g_SetErrorCode(pErrorCode, 0);
 	CHECK_RETURN_BOOL_QUIET(INVALID_SOCKET != m_hRemoteSocket && m_hRemoteSocket > 0);
 
@@ -278,7 +281,7 @@ BOOL AsyncSocketStream::Send(SPDynamicBuffer &spBuffer, INT *pErrorCode)
 
 	// 数据加密处理
 
-	size_t nPackageSize = spBuffer->GetUsedSize();
+	nPackageSize = spBuffer->GetUsedSize();
 	while (nPackageSize > 0)
 	{
 		INT nRetCode = ::send(m_hRemoteSocket, pPackage, nPackageSize, 0);

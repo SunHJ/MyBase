@@ -80,8 +80,4 @@ typedef AsyncSocketStream *			PAsyncSocketStream;
 typedef SharedPtr<AsyncSocketStream>	SPAsyncSocketStream;
 typedef std::vector<PAsyncSocketStream> VecPAsyncSocketStream;
 
-#ifdef PLATFORM_OS_LINUX
-typedef std::vector<struct epoll_event> VecEpollEvent;
-#endif // PLATFORM_OS_LINUX
-
 #endif //__NET_SOCKET_STREAM_H__

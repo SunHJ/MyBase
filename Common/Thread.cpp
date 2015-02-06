@@ -203,8 +203,8 @@ BOOL SimpleThread::Start(ThreadFun pFunction, VOID* pParam)
 
 VOID SimpleThread::Stop()
 {
-#ifdef PLATFORM_OS_WINDOWS 
-	ASSERT(m_uThreadId);
+    CHECK_RETURN_VOID_QUIET(m_uThreadId > 0);
+#ifdef PLATFORM_OS_WINDOWS
 	DWORD dwResult = ::WaitForSingleObject(m_hThread, 10 * 1000);
 	if (dwResult == WAIT_TIMEOUT)
 	{
@@ -212,8 +212,7 @@ VOID SimpleThread::Stop()
 	}
 	::CloseHandle(m_hThread);
     m_uThreadId = NULL;
-#else	 
-	ASSERT(m_uThreadId > 0);
+#else
 	VOID* pRet = NULL;
 	::pthread_join(m_uThreadId, &pRet);
     m_uThreadId = 0;

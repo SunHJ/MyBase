@@ -87,8 +87,6 @@ inline VOID g_SafelyDeletePtr(T *&p)
 	g_DeletePtr(p);
 }
 
-
-
 template <class T>
 inline VOID g_DeleteArrayPtr(T *&p)
 {
@@ -97,7 +95,6 @@ inline VOID g_DeleteArrayPtr(T *&p)
 		delete[] p; p = NULL;
 	}
 }
-
 
 template <class T>
 inline VOID g_SafelyDeleteArrayPtr(T *&p)

@@ -12,7 +12,6 @@ FrameControl::FrameControl(INT nFPS) : m_nFPS(nFPS)
 {
 }
 
-
 FrameControl::~FrameControl()
 {
 }

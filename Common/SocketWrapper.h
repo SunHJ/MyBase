@@ -8,6 +8,7 @@
 #pragma comment(lib, "ws2_32.lib")
 #else 
 #include <sys/poll.h>
+#include <sys/epoll.h>
 #include <sys/types.h>          // for socket
 #include <sys/ioctl.h>
 #include <sys/socket.h>         // for socket
