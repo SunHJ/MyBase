@@ -43,7 +43,7 @@ private:
 	SimpleThread	m_cRecvThread;
 
 	INT		m_nEpollHandle;
-	BOOL _EpollWaitProcess(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);		    
+	BOOL _EpollWaitProcess();		    
 	struct epoll_event m_EpollEvents[MAX_SOCKET_EVENT];
 
 	INT m_nHeadPos;

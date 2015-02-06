@@ -184,9 +184,7 @@ BOOL SuperServer::ProcessAllCompletePackage(PAsyncSocketStream &pAsyncSocketStre
 	while (bLoopFlag)
 	{
 		m_spDataBuffer->Reset();
-        printf("pAsyncSocketStream Recv Begin \n");
 		bRetCode = pAsyncSocketStream->Recv(m_spDataBuffer, &nErrorCode);
-        printf(">%d %d\n", bRetCode, nErrorCode);
 		if (1 == bRetCode)
 		{
 			ProcessNetMessage(pAsyncSocketStream, m_spDataBuffer);
@@ -203,28 +201,30 @@ BOOL SuperServer::ProcessAllCompletePackage(PAsyncSocketStream &pAsyncSocketStre
 		if (0 == bRetCode)
 			break;
 	}
-    printf("ProcessAllCompletePackage %d\n", bRetCode);
 	return TRUE;  
 }
 
 VOID SuperServer::ProcessNewConnect(PAsyncSocketStream &pSocketStream)
 {
-	printf("new client(%s:%d) in...\n", pSocketStream->GetRemoteIp().c_str(), pSocketStream->GetRemotePort());
+	printf("new client(%s:%d) in...\n",
+            pSocketStream->GetRemoteIp().c_str(),
+            pSocketStream->GetRemotePort());
 	/*		*********		*********		*********		*********		*********		*********		*********/
 }
 
 VOID SuperServer::ProcessNetMessage(PAsyncSocketStream &pSocketStream, SPDynamicBuffer &spBuffer)
 {
-    INT nSize = static_cast<INT>(spBuffer->GetUsedSize());
-	printf("client(%s %d) Msg in DataSize:%zd\n", 
+	printf("client(%s %d) Msg in DataSize:%zd\n",
             pSocketStream->GetRemoteIp().c_str(),
-            pSocketStream->GetRemotePort(), nSize);
-//            spBuffer->GetUsedSize());
+            pSocketStream->GetRemotePort(),
+            spBuffer->GetUsedSize());
 	/*		*********		*********		*********		*********		*********		*********		*********/
 }
 
 VOID SuperServer::ProcessClentClose(PAsyncSocketStream &pSocketStream)
 {
-	printf("client(%s %d) close\n", pSocketStream->GetRemoteIp().c_str(), pSocketStream->GetRemotePort());
+	printf("client(%s %d) close\n",
+            pSocketStream->GetRemoteIp().c_str(),
+            pSocketStream->GetRemotePort());
 	/*		*********		*********		*********		*********		*********		*********		*********/
 }

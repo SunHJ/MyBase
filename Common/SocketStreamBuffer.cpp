@@ -81,6 +81,7 @@ BOOL SocketStreamBuffer::GetPackage(SPDynamicBuffer &spBuffer)
 		nPackageBodySize = *(WORD *)(pPackage);
 		nPackageSize = nPackageBodySize + nPackageHeadSize;
 	}
+    CHECK_RETURN_BOOL_QUIET(nPackageSize>nPackageHeadSize);
 	// 
 	if (GetUnReadDataSize() >= nPackageSize)
 	{

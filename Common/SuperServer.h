@@ -42,7 +42,7 @@ private:
 	HANDLE m_hThread;
 	static THREAD_FUNC_RET_TYPE WINAPI ThreadFunction(VOID *);
 #else
-	static THREAD_FUNC_RET_TYPE *ThreadFunction(VOID *);
+	static THREAD_FUNC_RET_TYPE ThreadFunction(VOID *);
 #endif
 };
 #endif // !__SUPER_SERVER_H__

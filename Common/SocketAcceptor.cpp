@@ -36,6 +36,30 @@ Exit0:
 	return bResult;
 }
 
+BOOL UnRegisterEpollCtrl(INT nEpollHandle, PAsyncSocketStream &pSocketStream)
+{
+	BOOL bResult = FALSE;
+	INT nRetCode = 0;
+    SOCKET sConnFd;
+	epoll_event ev;
+	PROCESS_ERROR(-1 != nEpollHandle);
+	PROCESS_ERROR(pSocketSteam);
+
+    sConnFd = pSocketSteam->GetSocket();
+    PROCESS_ERROR(INVALID_SOCKET != sConnFd);
+    
+    ev.data.fd = sConnFd;
+	ev.events = EPOLLIN | EPOLLET;
+	//ev.data.ptr = (void *)pSocketSteam;
+	nRetCode = epoll_ctl(nEpollHandle, EPOLL_CTL_DEL, sConnFd, &ev);
+	PROCESS_ERROR(nRetCode == 0);
+
+	bResult = TRUE;
+
+Exit0:
+	return bResult;
+}
+
 VOID EpollRecvThreadFun(VOID* pParam)
 {
 	ASSERT(pParam);
@@ -136,7 +160,9 @@ BOOL NonBlockSocketAcceptor::Wait(INT &nEventCount, SPAsyncSocketEventArray spEv
 
 	bRetCode = WaitProcessAccept(MAX_WAIT_ACCEPT_EVENT, nEventCount, spEventArray);
 	PROCESS_ERROR_QUIET(bRetCode);
-
+#ifdef PLATFORM_OS_LINUX
+    _EpollWaitProcess();
+#endif
 	bRetCode = WaitClientRequet(MAX_SOCKET_EVENT, nEventCount, spEventArray);
 	PROCESS_ERROR_QUIET(bRetCode);
 
@@ -200,17 +226,11 @@ Exit0:
 BOOL NonBlockSocketAcceptor::WaitClientRequet(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray)
 {
 	BOOL bReCode = FALSE;  
-#ifdef PLATFORM_OS_WINDOWS
+//#ifdef PLATFORM_OS_WINDOWS
 	bReCode = m_spSocketStreamQueue->Wait(nMaxEventCount, nEventCount, spEventArray);
-#else
-	bReCode = _EpollWaitProcess(nMaxEventCount, nEventCount, spEventArray);
-#endif // PLATFORM_OS_WINDOWS
-
-#ifdef PLATFORM_OS_LINUX
-	//INT nMaxEvent = m_spSocketStreamQueue->GetCurStreamVectorLen();
-	  
-#endif // PLATFORM_OS_WINDOWS
-
+//#else
+//	bReCode = _EpollWaitProcess(nMaxEventCount, nEventCount, spEventArray);
+//#endif // PLATFORM_OS_WINDOWS
 	return bReCode;
 }
 
@@ -283,24 +303,28 @@ Exit0:
 }
 
 #ifdef PLATFORM_OS_LINUX
-BOOL NonBlockSocketAcceptor::_EpollWaitProcess(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray)
+BOOL NonBlockSocketAcceptor::_EpollWaitProcess()
 {
 	BOOL bResult = FALSE;
 	INT nRetCode = 0, nRemainEventCount;
 	PAsyncSocketStream pSocketStream = NULL;
 
-	PROCESS_ERROR(nMaxEventCount < MAX_SOCKET_EVENT);
 	PROCESS_ERROR(-1 != m_nEpollHandle);
-	nRemainEventCount = nMaxEventCount - nEventCount;
+	nRemainEventCount = m_spSocketStreamQueue->GetCurStreamVectorLen();
 	nRetCode = epoll_wait(m_nEpollHandle, m_EpollEvents, nRemainEventCount, 0);
 	for (int i = 0; i < nRetCode; i++)
 	{
 		pSocketStream = (PAsyncSocketStream)(m_EpollEvents[i].data.ptr);
 		if (m_EpollEvents[i].events&EPOLLIN)
 		{
-			spEventArray[nEventCount].m_nEventType = SOCKET_EVENT_IN;
-			spEventArray[nEventCount].m_pAsyncSocketStream = pSocketStream;
-			++nEventCount;
+            nRetCode = pSocketStream->TryEpollRecv();
+            if (nRetCode <= 0)
+            {
+                UnRegisterEpollCtrl(m_nEpollHandle, pSocketStream);
+            }
+			//spEventArray[nEventCount].m_nEventType = SOCKET_EVENT_IN;
+			//spEventArray[nEventCount].m_pAsyncSocketStream = pSocketStream;
+			//++nEventCount;
 		}
 	}
     bResult = TRUE;
@@ -313,7 +337,6 @@ VOID NonBlockSocketAcceptor::MainLoopRecv()
 {
 	INT nRetCode = 0;
 	PAsyncSocketStream pCurSocket = NULL;
-    printf("<<NonBlockSocketAcceptor::MainLoopRecv \n");
 	while (m_bLoopFlag)
 	{
         m_Event.WaitEvent();

@@ -1,7 +1,7 @@
 #include "SocketStream.h"
 
 #ifdef PLATFORM_OS_LINUX
-// return -1: error, 0:NoData, 1:success
+// return -1: error, 0:No Complete Package, 1:Success
 INT AsyncSocketStream::Recv(SPDynamicBuffer &spBuffer, INT *pErrorCode)
 {
 	INT nResult = -1;
@@ -13,15 +13,15 @@ INT AsyncSocketStream::Recv(SPDynamicBuffer &spBuffer, INT *pErrorCode)
 
 	g_SetErrorCode(pErrorCode, 0);
 
-	TryEpollRecv();
-// 	// no data from client
-// 	CHECK_RETURN_CODE_QUIET(FALSE != m_bRecvCompletedFlag, 0);
-// 
-// 	// inner system error occure
-// 	CHECK_RETURN_CODE_QUIET(0 == m_nRecvErrorCode, -1);
-// 
-// 	// need to close socket
-// 	CHECK_RETURN_CODE_QUIET(FALSE == m_bNeedToCloseFlag, 0);
+//	TryEpollRecv();
+ 	// no data from client
+ 	CHECK_RETURN_CODE_QUIET(FALSE != m_bRecvCompletedFlag, 0);
+
+    // inner system error occure
+ 	CHECK_RETURN_CODE_QUIET(0 == m_nRecvErrorCode, -1);
+ 
+ 	// need to close socket
+ 	CHECK_RETURN_CODE_QUIET(FALSE == m_bNeedToCloseFlag, 0);
 
 	nRetCode = m_spDataBuffer->GetPackage(spBuffer);
 	if (!nRetCode) // 没有完整的数据包
@@ -39,22 +39,22 @@ Exit0:
 	return nResult;
 }
 
-// return -1: Error, n: recv data bytesize
-VOID AsyncSocketStream::TryEpollRecv()
+// return -1: Error, 0:Close, 1:Success
+INT AsyncSocketStream::TryEpollRecv()
 {
-    INT nRetCode = 0, nRecvSize = 0;
-	BOOL bHasData = FALSE;
+    INT nRetCode = 0, nResult = -1;
 	size_t nMaxLen = 0;
     PCHAR pBuffer = NULL;
 
-	m_nRecvSize = 0;
 	m_nRecvErrorCode = 0;
 	m_bNeedToCloseFlag = FALSE;
+    m_bRecvCompletedFlag = FALSE;
     while(true)
     {
         nMaxLen = m_spDataBuffer->GetTotalSize() - m_spDataBuffer->GetUsedSize();
 		if (nMaxLen == 0)
 			break;
+
         pBuffer = (PCHAR)m_spDataBuffer->GetLeftPtr();
 		nRetCode = ::recv(m_hRemoteSocket, pBuffer, nMaxLen, 0);
 		if (SOCKET_ERROR == nRetCode)
@@ -64,7 +64,7 @@ VOID AsyncSocketStream::TryEpollRecv()
 
 			if (g_IsSocketWouldBlock())
 			{
-				nRetCode = 0;
+				nRetCode = 1;
 				PROCESS_ERROR_QUIET(FALSE);
 			}
 			// inner error
@@ -74,20 +74,21 @@ VOID AsyncSocketStream::TryEpollRecv()
 		}
 		else if (0 == nRetCode)
 		{
+            nResult = 0;
 			m_bNeedToCloseFlag = TRUE;
 			break;
 		}
-		
+
 		m_spDataBuffer->AddUsedSize(nRetCode);
-		nRecvSize += nRetCode;
     }
 
 Exit0:
-	if (SOCKET_ERROR != nRetCode)
+	if (nRetCode > 0)
 	{
+        nResult = 1;
 		m_bRecvCompletedFlag = TRUE;
-		m_nRecvSize = nRecvSize;
 	}
+    return nResult;
 }
 
 #endif // PLATFORM_OS_WINDOWS
