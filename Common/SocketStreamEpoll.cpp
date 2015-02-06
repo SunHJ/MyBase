@@ -13,14 +13,15 @@ INT AsyncSocketStream::Recv(SPDynamicBuffer &spBuffer, INT *pErrorCode)
 
 	g_SetErrorCode(pErrorCode, 0);
 
-	// no data from client
-	CHECK_RETURN_CODE_QUIET(FALSE != m_bRecvCompletedFlag, 0);
-
-	// inner system error occure
-	CHECK_RETURN_CODE_QUIET(0 == m_nRecvErrorCode, -1);
-
-	// need to close socket
-	CHECK_RETURN_CODE_QUIET(FALSE == m_bNeedToCloseFlag, 0);
+	TryEpollRecv();
+// 	// no data from client
+// 	CHECK_RETURN_CODE_QUIET(FALSE != m_bRecvCompletedFlag, 0);
+// 
+// 	// inner system error occure
+// 	CHECK_RETURN_CODE_QUIET(0 == m_nRecvErrorCode, -1);
+// 
+// 	// need to close socket
+// 	CHECK_RETURN_CODE_QUIET(FALSE == m_bNeedToCloseFlag, 0);
 
 	nRetCode = m_spDataBuffer->GetPackage(spBuffer);
 	if (!nRetCode) // 没有完整的数据包

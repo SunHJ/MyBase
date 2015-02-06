@@ -200,13 +200,17 @@ Exit0:
 BOOL NonBlockSocketAcceptor::WaitClientRequet(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray)
 {
 	BOOL bReCode = FALSE;  
+#ifdef PLATFORM_OS_WINDOWS
+	bReCode = m_spSocketStreamQueue->Wait(nMaxEventCount, nEventCount, spEventArray);
+#else
+	bReCode = _EpollWaitProcess(nMaxEventCount, nEventCount, spEventArray);
+#endif // PLATFORM_OS_WINDOWS
 
 #ifdef PLATFORM_OS_LINUX
 	//INT nMaxEvent = m_spSocketStreamQueue->GetCurStreamVectorLen();
-	_EpollWaitProcess(MAX_SOCKET_EVENT-1);	  
+	  
 #endif // PLATFORM_OS_WINDOWS
 
-	bReCode = m_spSocketStreamQueue->Wait(nMaxEventCount, nEventCount, spEventArray);
 	return bReCode;
 }
 
@@ -279,32 +283,26 @@ Exit0:
 }
 
 #ifdef PLATFORM_OS_LINUX
-BOOL NonBlockSocketAcceptor::_EpollWaitProcess(INT nMaxEventCount)
+BOOL NonBlockSocketAcceptor::_EpollWaitProcess(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray)
 {
 	BOOL bResult = FALSE;
-	INT nRetCode = 0;
+	INT nRetCode = 0, nRemainEventCount;
 	PAsyncSocketStream pSocketStream = NULL;
 
 	PROCESS_ERROR(nMaxEventCount < MAX_SOCKET_EVENT);
 	PROCESS_ERROR(-1 != m_nEpollHandle);
-//    printf(">>>>>epoll_wait begin...\n");
-	nRetCode = epoll_wait(m_nEpollHandle, m_EpollEvents, nMaxEventCount, 0);
+	nRemainEventCount = nMaxEventCount - nEventCount;
+	nRetCode = epoll_wait(m_nEpollHandle, m_EpollEvents, nRemainEventCount, 0);
 	for (int i = 0; i < nRetCode; i++)
 	{
-        printf("EpollWaitProcess %d\n", nRetCode);
 		pSocketStream = (PAsyncSocketStream)(m_EpollEvents[i].data.ptr);
 		if (m_EpollEvents[i].events&EPOLLIN)
 		{
-            pSocketStream->TryEpollRecv();
-            printf("TryEpollRecv End\n");
-            //printf(">>EpollWaitProcess %d HeadPos:%d\n", nRetCode, m_nHeadPos);
-			//m_nHeadPos = (m_nHeadPos + 1) % MAX_SOCKET_EVENT;
-			//WaitQueue[m_nHeadPos] = pSocketStream;
-			//m_Event.SetEvent();
-            //m_Semap.ReleaseSemaphore();
+			spEventArray[nEventCount].m_nEventType = SOCKET_EVENT_IN;
+			spEventArray[nEventCount].m_pAsyncSocketStream = pSocketStream;
+			++nEventCount;
 		}
 	}
-//    printf("<<<<<epoll_wait end\n");
     bResult = TRUE;
 
 Exit0:
