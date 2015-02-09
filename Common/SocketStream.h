@@ -63,7 +63,7 @@ private:
 	WSABUF	m_wsaBuffer;	// used in WSARecv	   
 #else
 public:
-	VOID TryEpollRecv();
+	INT TryEpollRecv();
 private:
 #endif // PLATFORM_OS_WINDOWS  
 private:

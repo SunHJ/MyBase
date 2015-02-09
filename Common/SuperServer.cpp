@@ -105,6 +105,7 @@ VOID SuperServer::Stop()
 	::pthread_cancel(m_threadID);
 #endif //PLATFORM_OS_WINDOWS
     m_threadID = 0;
+    UnInit();
 }
 
 size_t SuperServer::GetClientCount()
@@ -216,7 +217,7 @@ VOID SuperServer::ProcessNewConnect(PAsyncSocketStream &pSocketStream)
 
 VOID SuperServer::ProcessNetMessage(PAsyncSocketStream &pSocketStream, SPDynamicBuffer &spBuffer)
 {
-	printf("client(%s %d) Msg in DataSize:%zd\n",
+	printf("client(%s %d) Msg in DataSize:%d\n",
             pSocketStream->GetRemoteIp().c_str(),
             pSocketStream->GetRemotePort(),
             spBuffer->GetUsedSize());

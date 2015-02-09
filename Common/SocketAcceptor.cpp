@@ -134,7 +134,8 @@ BOOL NonBlockSocketAcceptor::UnInit()
 	bRetCode = g_CloseSocket(m_hListenSocket);
 	CHECK_RETURN_BOOL(bRetCode);
 #ifdef PLATFORM_OS_LINUX  
-	m_bLoopFlag = FALSE; 
+	m_bLoopFlag = FALSE;
+    m_Semap.ReleaseSemaphore();
 	m_cRecvThread.Stop();
 
 	m_nHeadPos = 0;
