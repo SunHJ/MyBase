@@ -31,4 +31,27 @@ extern void Test_Buffer();
 
 extern void Test_Net();
 
+class Client
+{
+public:
+	Client();
+	~Client();
+	BOOL Close();
+	BOOL ConnectServer(CPCCHAR cpcIPAddress, INT nPort);
+	VOID SetMsg2Server(CPCCHAR cpcMsg);
+
+	VOID RecvMainLoop();
+private:
+	SocketConnector m_Connector;
+
+	SPDynamicBuffer m_spRecvBuff;
+	
+	BOOL m_bConnect;
+	PSocketStream m_pConnectSocket;
+
+	BOOL m_bRecvLoop;
+	SimpleThread m_Recv;
+};
+extern void Test_NetClient(CPCCHAR cpcIP, INT nPort);
+
 #endif

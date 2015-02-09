@@ -205,7 +205,7 @@ VOID DynamicBuffer::Reset()
 
 VOID DynamicBuffer::SetUseSize(CONST size_t nDataBytes)
 {
-	ASSERT(nDataBytes < m_nTotalSize);
+	ASSERT(nDataBytes <= m_nTotalSize);
 	m_nUsedSize = nDataBytes;
 }
 

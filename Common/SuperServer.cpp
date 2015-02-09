@@ -12,6 +12,8 @@ SuperServer::SuperServer()
 	m_bLoopFlag = FALSE;
 	m_threadID = 0;
 	m_spDataBuffer = SPDynamicBuffer(new DynamicBuffer());
+
+	m_spBroadMsgBuffer = SPDynamicBuffer(new DynamicBuffer());
 }
 
 
@@ -205,6 +207,14 @@ BOOL SuperServer::ProcessAllCompletePackage(PAsyncSocketStream &pAsyncSocketStre
 			break;
 	}
 	return TRUE;  
+}
+
+VOID SuperServer::SetBroadcastMsg(CPCCHAR cpcMsg)
+{
+	SPDynamicBuffer spMsgBuffer = SPDynamicBuffer(new DynamicBuffer());
+	spMsgBuffer->InsertDataIntoHead(cpcMsg, strlen(cpcMsg));
+
+	m_spStreamQueue->BroadcastMsg(spMsgBuffer);
 }
 
 VOID SuperServer::ProcessNewConnect(PAsyncSocketStream &pSocketStream)

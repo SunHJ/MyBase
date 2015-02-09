@@ -38,6 +38,7 @@ public:
 	BOOL DelClient(PAsyncSocketStream &pAsyncSocketStream);
 	BOOL Wait(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray);
 
+	VOID BroadcastMsg(SPDynamicBuffer &spBuffer);
 	VOID CloseAll();
 	size_t GetCurStreamVectorLen() CONST;
 

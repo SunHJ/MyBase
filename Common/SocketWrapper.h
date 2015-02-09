@@ -18,6 +18,7 @@
 #endif //PLATFORM_OS_WINDOWS
 
 #define MAX_BACK_LOG_NUM 8
+#define MAX_NET_PACKAGE_SIZE 65500
 
 #ifdef PLATFORM_OS_WINDOWS
 typedef int SockLen;

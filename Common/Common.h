@@ -12,5 +12,6 @@
 #include "UniversalQueue.h"
 #include "SelecterServer.h"
 #include "SuperServer.h"
+#include "SocketConnector.h"
 
 #endif //__INCLUDE_COMMON_H__

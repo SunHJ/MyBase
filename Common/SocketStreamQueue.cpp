@@ -135,11 +135,13 @@ VOID AsyncSocketStreamQueue::CloseAll()
 	VecPAsyncSocketStream::iterator iterBegin = m_vecSocketStream.begin();
 	VecPAsyncSocketStream::iterator iterEnd = m_vecSocketStream.end();
 
-	PAsyncSocketStream pSocketStream;
+	PAsyncSocketStream pSocketStream = NULL;
 	while (iterBegin != iterEnd)
 	{
 		pSocketStream = (*iterBegin);
-		
+		if (NULL == pSocketStream)
+			continue;
+
 		pSocketStream->Close();
 		g_SafelyDeletePtr(pSocketStream);
 
@@ -207,6 +209,29 @@ BOOL AsyncSocketStreamQueue::Wait(INT nMaxEventCount, INT &nEventCount, SPAsyncS
 	// 保存当前等待处理节点位置，下次优先处理
 	m_nLastWaitToProcessPos = std::distance(iterBegin, iterNext);
 	return TRUE;
+}
+
+VOID AsyncSocketStreamQueue::BroadcastMsg(SPDynamicBuffer &spBuffer)
+{
+	INT nErrorCode = 0;
+	BOOL bRetCode = FALSE;
+	CHECK_POINTER_RETURN_VOID_QUIET(spBuffer);
+	PAsyncSocketStream pAsyncSocketStream = NULL;
+	VecPAsyncSocketStream::iterator iterCur = m_vecSocketStream.begin();
+	VecPAsyncSocketStream::iterator iterEnd = m_vecSocketStream.end();
+	VecPAsyncSocketStream::iterator iterTmp = iterCur;
+
+	while (iterCur != iterEnd)
+	{
+		pAsyncSocketStream = (*iterCur);
+		bRetCode = pAsyncSocketStream->Send(spBuffer, &nErrorCode);
+		if (!bRetCode)
+		{
+			m_vecSocketStream.erase(iterCur);
+			g_SafelyDeletePtr(pAsyncSocketStream);
+		}
+		iterCur++;
+	}								
 }
 
 

@@ -63,7 +63,9 @@ SOCKET g_ConnectServerSocket(CPCCHAR cpcHostIP, USHORT usPort, INT *pErrorCode /
     INT nOptVal = 1;
 	sockaddr_in saServerAddr;
 
-	PROCESS_ERROR(INVALID_SOCKET != nReturnSocket);
+	g_SetErrorCode(pErrorCode, 0);
+
+	PROCESS_ERROR_QUIET(INVALID_SOCKET != nReturnSocket);
 	if (NULL != cpcHostIP && cpcHostIP[0] != '\0')
 	{
 		ulAddress = ::inet_addr(cpcHostIP);
@@ -79,12 +81,17 @@ SOCKET g_ConnectServerSocket(CPCCHAR cpcHostIP, USHORT usPort, INT *pErrorCode /
 	saServerAddr.sin_family = AF_INET;
 	saServerAddr.sin_addr.s_addr = ulAddress;
 	saServerAddr.sin_port = ::htons(usPort);
-
-	nRetCode = ::connect(nReturnSocket, (struct sockaddr *) &saServerAddr, sizeof(struct sockaddr));
-
-	PROCESS_ERROR(0 == nRetCode);
+	while (true)
+	{
+		nRetCode = ::connect(nReturnSocket, (struct sockaddr *) &saServerAddr, sizeof(struct sockaddr));
+		if (nRetCode >= 0)
+			break;
+		nRetCode = g_IsSocketCanRestore();
+		PROCESS_ERROR_QUIET(nRetCode);
+	}
 
 	return nReturnSocket;
+
 Exit0:
 	g_SetErrorCode(pErrorCode, g_GetSocketLastError());
 	g_CloseSocket(nReturnSocket);
@@ -123,7 +130,6 @@ INT g_SelectDataIn(SOCKET nSocket, CONST timeval *pcTimeout)
 
 //Windows 与 Linux 分别封装 
 #ifdef PLATFORM_OS_WINDOWS
-
 NetService::NetService() : m_lStarted(0)
 {
 	NetService::Strat();
@@ -249,7 +255,7 @@ BOOL g_CloseSocket(SOCKET &s)
 	if (INVALID_SOCKET != s)
 	{
 		struct linger li;
-		li.l_onoff  = 1;
+		li.l_onoff  = 0;
 		li.l_linger = 0;
 		::setsockopt(s, SOL_SOCKET, SO_LINGER, (char *)&li, sizeof(li));
 

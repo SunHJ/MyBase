@@ -5,8 +5,6 @@
 #include "SocketWrapper.h"	   
 #include "SocketStreamBuffer.h"
 
-#define MAX_NET_PACKAGE_SIZE 65500
-
 class SocketStream : private UnCopyable
 {
 private: 
@@ -22,6 +20,7 @@ public:
 	BOOL Init(SOCKET hRemoteSocket, STRING strRemoteIp = "", USHORT usRemotePort = 0);
 	BOOL Close();
 	BOOL UnInit();
+	BOOL SetToNonBlock(BOOL bSetIt = TRUE);
 
 	STRING GetRemoteIp() CONST;
 	USHORT GetRemotePort() CONST;

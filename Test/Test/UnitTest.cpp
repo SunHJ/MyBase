@@ -144,24 +144,192 @@ extern void Test_Net()
 	SuperServer server;
 	server.Init("", 1234);
 	server.Start();
-	char cType = 0;
+	PCHAR pMsg = NULL;
+	char szBuffer[257];
+
 	while (true)
 	{
 		//scanf("%c", &cType);
-		std::cin >> cType;
-		if (cType == 'q')
+		std::cin >> szBuffer;
+		if (szBuffer[0] == 'q')
 		{
 			server.Stop();
 			break;
 		}
-		else if (cType == 's')
+		else if (szBuffer[0] == 's')
 		{
 			server.Stop();
 		}
-        else if (cType == 'l')
+		else if (szBuffer[0] == 'l')
         {
             printf(">>>>>Client Count %d\n", server.GetClientCount());
         }
+		else if (szBuffer[0] == 'm')
+		{
+			pMsg = &szBuffer[1];
+			server.SetBroadcastMsg(pMsg);
+		}
+		else
+		{
+			printf("UnKnown CMD\n");
+		}
+
+	}
+}
+
+VOID RecvThread(PVOID pParam)
+{
+	Client* pClient = (Client*)pParam;
+	pClient->RecvMainLoop();
+}
+
+Client::Client()
+{
+#ifdef PLATFORM_OS_WINDOWS
+	SINGLETON_GET_PTR(NetService)->Strat();
+#endif	
+
+	m_pConnectSocket = NULL;
+	m_bConnect = FALSE;
+	m_bRecvLoop = FALSE;
+	m_spRecvBuff = SPDynamicBuffer(new DynamicBuffer(1024));
+}
+
+Client::~Client()
+{
+	m_bRecvLoop = FALSE;
+	if (NULL != m_pConnectSocket)
+	{
+		m_pConnectSocket->Close();
+		g_SafelyDeletePtr(m_pConnectSocket);
+	}
+
+#ifdef PLATFORM_OS_WINDOWS
+	SINGLETON_GET_PTR(NetService)->Stop();
+#endif
+}
+
+VOID Client::RecvMainLoop()
+{
+	INT nRetCode = 0, nErrorCode = 0;
+	timeval tmTimeOut;
+	tmTimeOut.tv_sec = 0;
+	tmTimeOut.tv_usec = 0;
+
+	m_bRecvLoop = TRUE;
+
+	while (m_bRecvLoop)
+	{
+		nRetCode = g_CheckCanRecv(m_pConnectSocket->GetSocket(), &tmTimeOut);
+		if (1 == nRetCode)
+		{
+			m_spRecvBuff->Reset();
+			nRetCode = m_pConnectSocket->Recv(m_spRecvBuff, &nErrorCode);
+			PROCESS_ERROR_QUIET(nRetCode > 0);
+			printf("Recv %d Bytes from Server(%s)\n", m_spRecvBuff->GetUsedSize(), m_pConnectSocket->GetRemoteIp().c_str());
+		}
+		else if (-1 == nErrorCode)
+		{
+			PROCESS_ERROR_QUIET(FALSE);
+		}
+	}
+
+Exit0:
+	m_bRecvLoop = FALSE;
+	printf("Client has closed.\n");
+}
+
+BOOL Client::Close()
+{
+	if (m_bRecvLoop)
+	{
+		m_bRecvLoop = FALSE;
+		m_Recv.Stop();
+	}
+
+	if (m_bConnect)
+	{
+		m_pConnectSocket->Close();
+	}					  
+	return TRUE;
+}
+
+
+BOOL Client::ConnectServer(CPCCHAR cpcIPAddress, INT nPort)
+{
+	INT nErrorCode = 0;
+	BOOL bResult = FALSE, bRetCode = FALSE;
+	if (m_bRecvLoop)
+	{
+		m_bRecvLoop = FALSE;
+		m_Recv.Stop();
+		m_pConnectSocket->Close();
+		g_SafelyDeletePtr(m_pConnectSocket);
+	}
+	m_pConnectSocket = m_Connector.Connect(cpcIPAddress, nPort);
+	PROCESS_ERROR_QUIET(m_pConnectSocket);
+
+	bRetCode = m_pConnectSocket->SetToNonBlock();
+	PROCESS_ERROR_QUIET(bRetCode);
+	
+	m_bConnect = TRUE;
+
+	bRetCode = m_Recv.Start(&RecvThread, this);
+	PROCESS_ERROR_QUIET(bRetCode);
+
+	bResult = TRUE;
+Exit0:
+	return bResult;
+}
+
+VOID Client::SetMsg2Server(CPCCHAR cpcMsg)
+{
+	INT nErrorCode = 0;
+	if (m_bConnect)
+	{
+		SPDynamicBuffer spSendBuff = SPDynamicBuffer(new DynamicBuffer());
+		spSendBuff->InsertDataIntoHead(cpcMsg, strlen(cpcMsg));
+		m_pConnectSocket->Send(spSendBuff, &nErrorCode);
+	}
+	else
+	{
+		printf("Client can't connect to Server.\n");
+	}
+}
+
+void Test_NetClient(CPCCHAR cpcIP, INT nPort)
+{
+	int nRetCode = 0;
+	char* pMsg = NULL;
+	char szBuffer[257];
+	Client client;
+
+	while (true)
+	{
+		//scanf("%c", &cType);
+		std::cin >> szBuffer;
+		if (szBuffer[0] == 'q')
+		{
+			client.Close();
+			break;
+		}
+		else if (szBuffer[0] == 'c')
+		{
+			nRetCode = client.ConnectServer(cpcIP, nPort);
+			if (FALSE == nRetCode)
+			{
+				printf("Connect %s:%d failed.\n", cpcIP, nPort);
+			}
+			else
+			{
+				printf("Connect %s:%d success.\n", cpcIP, nPort);
+			}
+		}
+		else if (szBuffer[0] == 'm')
+		{
+			pMsg = &szBuffer[1];
+			client.SetMsg2Server(pMsg);
+		}
 		else
 		{
 			printf("UnKnown CMD\n");

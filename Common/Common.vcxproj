@@ -104,6 +104,7 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClInclude Include="SharedArrayPtr.h" />
     <ClInclude Include="SharedPtr.h" />
     <ClInclude Include="SocketAcceptor.h" />
+    <ClInclude Include="SocketConnector.h" />
     <ClInclude Include="SocketEvent.h" />
     <ClInclude Include="SocketStream.h" />
     <ClInclude Include="SocketStreamBuffer.h" />
@@ -123,6 +124,7 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClCompile Include="SelecterServer.cpp" />
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="SocketAcceptor.cpp" />
+    <ClCompile Include="SocketConnector.cpp" />
     <ClCompile Include="SocketEvent.cpp" />
     <ClCompile Include="SocketStream.cpp" />
     <ClCompile Include="SocketStreamBuffer.cpp" />

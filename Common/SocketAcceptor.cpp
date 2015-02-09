@@ -60,7 +60,7 @@ Exit0:
 	return bResult;
 }
 
-VOID EpollRecvThreadFun(VOID* pParam)
+VOID EpollRecvThreadFun(PVOID pParam)
 {
 	ASSERT(pParam);
 	NonBlockSocketAcceptor* pAcceptor = (NonBlockSocketAcceptor*)pParam;

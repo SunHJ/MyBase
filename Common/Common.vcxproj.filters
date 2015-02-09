@@ -104,6 +104,9 @@
     <ClInclude Include="SocketStreamBuffer.h">
       <Filter>Net</Filter>
     </ClInclude>
+    <ClInclude Include="SocketConnector.h">
+      <Filter>Net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Thread.cpp">
@@ -155,6 +158,9 @@
       <Filter>Net</Filter>
     </ClCompile>
     <ClCompile Include="SocketStreamEpoll.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketConnector.cpp">
       <Filter>Net</Filter>
     </ClCompile>
   </ItemGroup>

@@ -146,6 +146,23 @@ Exit0:
 	return bResult;
 }
 
+BOOL SocketStream::SetToNonBlock(BOOL bSetIt /* = TRUE */)
+{
+	INT nErrorCode = 0;
+	BOOL bRetCode = FALSE;
+	CHECK_RETURN_BOOL(INVALID_SOCKET != m_hRemoteSocket);
+	if (bSetIt)
+	{
+		bRetCode = g_SetSocketNonBlock(m_hRemoteSocket, &nErrorCode);  
+		CHECK_RETURN_BOOL(bRetCode);
+	}
+// 	else
+// 	{
+// 
+// 	}	 
+	return TRUE;
+}
+
 STRING SocketStream::GetRemoteIp() CONST
 {
 	return m_strRemoteIp;

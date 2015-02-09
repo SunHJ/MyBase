@@ -20,9 +20,11 @@ public:
 
 	BOOL Init(CONST STRING &strIp, CONST USHORT &usPort);
 	VOID UnInit();
+
 	BOOL Start();
 	VOID Stop();
 
+	VOID SetBroadcastMsg(CPCCHAR cpcMsg);
 	virtual size_t GetClientCount();
 
 private:
@@ -38,6 +40,8 @@ private:
 	BOOL			m_bLoopFlag;
 	THREAD_ID		m_threadID;
 	SPDynamicBuffer m_spDataBuffer;
+	SPDynamicBuffer m_spBroadMsgBuffer;
+
 #ifdef PLATFORM_OS_WINDOWS
 	HANDLE m_hThread;
 	static THREAD_FUNC_RET_TYPE WINAPI ThreadFunction(VOID *);
