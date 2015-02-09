@@ -68,6 +68,7 @@ INT AsyncSocketStream::TryEpollRecv()
 				PROCESS_ERROR_QUIET(FALSE);
 			}
 			// inner error
+            nResult = -1;
 			m_bNeedToCloseFlag = TRUE;
 			m_nRecvErrorCode = g_GetSocketLastError();
 			PROCESS_ERROR_QUIET(FALSE);

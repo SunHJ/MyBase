@@ -36,7 +36,7 @@ Exit0:
 	return bResult;
 }
 
-BOOL UnRegisterEpollCtrl(INT nEpollHandle, PAsyncSocketStream &pSocketStream)
+BOOL UnRegisterEpollCtrl(INT nEpollHandle, PAsyncSocketStream &pSocketSteam)
 {
 	BOOL bResult = FALSE;
 	INT nRetCode = 0;
@@ -106,9 +106,10 @@ BOOL NonBlockSocketAcceptor::Init(CONST STRING &strIpAddress, CONST USHORT &usPo
 	m_nEpollHandle = epoll_create(MAX_SOCKET_EVENT);
 	PROCESS_ERROR(m_nEpollHandle != -1);
 
-	//m_bLoopFlag = TRUE;
-	//bRetCode = m_cRecvThread.Start(&EpollRecvThreadFun, (VOID*)this);
-	//PROCESS_ERROR(bRetCode);
+	m_bLoopFlag = TRUE;
+	bRetCode = m_cRecvThread.Start(&EpollRecvThreadFun, (VOID*)this);
+	PROCESS_ERROR(bRetCode);
+
 #endif
 	bResult = TRUE;
 
@@ -226,11 +227,7 @@ Exit0:
 BOOL NonBlockSocketAcceptor::WaitClientRequet(INT nMaxEventCount, INT &nEventCount, SPAsyncSocketEventArray spEventArray)
 {
 	BOOL bReCode = FALSE;  
-//#ifdef PLATFORM_OS_WINDOWS
 	bReCode = m_spSocketStreamQueue->Wait(nMaxEventCount, nEventCount, spEventArray);
-//#else
-//	bReCode = _EpollWaitProcess(nMaxEventCount, nEventCount, spEventArray);
-//#endif // PLATFORM_OS_WINDOWS
 	return bReCode;
 }
 
@@ -311,20 +308,24 @@ BOOL NonBlockSocketAcceptor::_EpollWaitProcess()
 
 	PROCESS_ERROR(-1 != m_nEpollHandle);
 	nRemainEventCount = m_spSocketStreamQueue->GetCurStreamVectorLen();
+
 	nRetCode = epoll_wait(m_nEpollHandle, m_EpollEvents, nRemainEventCount, 0);
-	for (int i = 0; i < nRetCode; i++)
+	
+    for (int i = 0; i < nRetCode; i++)
 	{
 		pSocketStream = (PAsyncSocketStream)(m_EpollEvents[i].data.ptr);
 		if (m_EpollEvents[i].events&EPOLLIN)
-		{
-            nRetCode = pSocketStream->TryEpollRecv();
-            if (nRetCode <= 0)
-            {
-                UnRegisterEpollCtrl(m_nEpollHandle, pSocketStream);
-            }
-			//spEventArray[nEventCount].m_nEventType = SOCKET_EVENT_IN;
-			//spEventArray[nEventCount].m_pAsyncSocketStream = pSocketStream;
-			//++nEventCount;
+		{   
+            m_nHeadPos = (m_nHeadPos + 1) % MAX_SOCKET_EVENT;
+            WaitQueue[m_nHeadPos] = pSocketStream;
+            m_Semap.ReleaseSemaphore();
+
+            //nRetCode = pSocketStream->TryEpollRecv();
+            //if (nRetCode <= 0)
+            //{
+            //    UnRegisterEpollCtrl(m_nEpollHandle, pSocketStream);
+            //}
+
 		}
 	}
     bResult = TRUE;
@@ -339,16 +340,18 @@ VOID NonBlockSocketAcceptor::MainLoopRecv()
 	PAsyncSocketStream pCurSocket = NULL;
 	while (m_bLoopFlag)
 	{
-        m_Event.WaitEvent();
-        //nRetCode = m_Semap.WaitSemaphore();
-        //printf("%d HeadePos:%d TailPos:%d\n", nRetCode, m_nHeadPos, m_nTailPos);
+        nRetCode = m_Semap.WaitSemaphore();
 
         m_nTailPos = (m_nTailPos + 1) % MAX_SOCKET_EVENT;
 		pCurSocket = WaitQueue[m_nTailPos];
 		if (NULL == pCurSocket)
 			continue;
 
-		pCurSocket->TryEpollRecv();
+		nRetCode = pCurSocket->TryEpollRecv();
+        if (nRetCode <= 0)
+        {
+            UnRegisterEpollCtrl(m_nEpollHandle, pCurSocket);
+        }
 
 		WaitQueue[m_nTailPos] = NULL;
 	}

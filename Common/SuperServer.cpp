@@ -150,6 +150,7 @@ BOOL SuperServer::ProcessNetEvent()
 					if (-1 == bRetCode)
 					{
 						ProcessClentClose(pAsyncSocketStream);
+                        m_spStreamQueue->DelClient(pAsyncSocketStream);
 					}
 #endif // PLATFORM_OS_WINDOWS
 				}
@@ -162,6 +163,7 @@ BOOL SuperServer::ProcessNetEvent()
 			case SOCKET_EVENT_CLOSE:
 				{
 					ProcessClentClose(pAsyncSocketStream);
+                    m_spStreamQueue->DelClient(pAsyncSocketStream);
 				}
 				break;
 			default:

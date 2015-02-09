@@ -43,13 +43,12 @@ private:
 	SimpleThread	m_cRecvThread;
 
 	INT		m_nEpollHandle;
-	BOOL _EpollWaitProcess();		    
+	BOOL    _EpollWaitProcess();		    
 	struct epoll_event m_EpollEvents[MAX_SOCKET_EVENT];
 
 	INT m_nHeadPos;
 	INT m_nTailPos;
 	Semaphore m_Semap;
-    ManualResetEvent m_Event;
 	PAsyncSocketStream WaitQueue[MAX_SOCKET_EVENT];
 #endif // PLATFORM_OS_LINUX
 };
