@@ -215,7 +215,7 @@ VOID AsyncSocketStreamQueue::BroadcastMsg(SPDynamicBuffer &spBuffer)
 {
 	INT nErrorCode = 0;
 	BOOL bRetCode = FALSE;
-	CHECK_POINTER_RETURN_VOID_QUIET(spBuffer);
+	CHECK_RETURN_VOID_QUIET(spBuffer);
 	PAsyncSocketStream pAsyncSocketStream = NULL;
 	VecPAsyncSocketStream::iterator iterCur = m_vecSocketStream.begin();
 	VecPAsyncSocketStream::iterator iterEnd = m_vecSocketStream.end();

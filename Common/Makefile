@@ -14,7 +14,8 @@ $(shell mkdir -p $(obj_dir))
 obj=Thread.o CriticalSection.o Semaphore.o Event.o File.o \
    	Buffer.o SocketWrapper.o SocketStream.o SocketEvent.o \
 	SocketAcceptor.o SelecterServer.o SocketStreamQueue.o \
-	SuperServer.o SocketStreamBuffer.o SocketStreamEpoll.o
+	SuperServer.o SocketStreamBuffer.o SocketStreamEpoll.o \
+	SocketConnector.o
 tag=libcommon.a
 
 
@@ -58,6 +59,9 @@ SocketStreamQueue.o:SocketStreamQueue.cpp
 
 SocketStreamBuffer.o:SocketStreamBuffer.cpp
 	$(CC) -c SocketStreamBuffer.cpp -std=c++11
+
+SocketConnector.o:SocketConnector.cpp
+	$(CC) -c SocketConnector.cpp -std=c++11
 
 SocketAcceptor.o:SocketAcceptor.cpp
 	$(CC) -c SocketAcceptor.cpp -std=c++11
