@@ -107,6 +107,9 @@
     <ClInclude Include="SocketConnector.h">
       <Filter>Net</Filter>
     </ClInclude>
+    <ClInclude Include="Heap.h">
+      <Filter>Structure</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Thread.cpp">
@@ -162,6 +165,9 @@
     </ClCompile>
     <ClCompile Include="SocketConnector.cpp">
       <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Heap.cpp">
+      <Filter>Structure</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

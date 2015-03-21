@@ -54,4 +54,6 @@ private:
 };
 extern void Test_NetClient(CPCCHAR cpcIP, INT nPort);
 
+extern void Test_Heap();
+
 #endif

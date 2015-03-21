@@ -337,3 +337,63 @@ void Test_NetClient(CPCCHAR cpcIP, INT nPort)
 
 	}
 }
+
+void Test_Heap()
+{
+	int nValue = 0, nRetCode;
+	char szBuffer[257];
+	Heap tHeap(20, FALSE);
+	srand((size_t)time(NULL));
+	for (int i = 0; i < 20; i++)
+	{
+		nValue = rand();
+		tHeap.Heap_Push(nValue);
+	}
+
+
+	while (true)
+	{
+		gets(szBuffer);
+		if (szBuffer[0] == 'q')
+		{
+			break;
+		}
+		else if (szBuffer[0] == 'l')
+		{
+			tHeap.PrintHeap();
+		}
+		else if (szBuffer[0] == 'i')
+		{
+			nValue = atoi(&szBuffer[2]);
+			nRetCode = tHeap.Heap_Push(nValue);
+			printf("Push Result : %d\n", nRetCode);
+		}
+		else if (szBuffer[0] == 'd')
+		{
+			nValue = atoi(&szBuffer[2]);
+			nRetCode = tHeap.Heap_Pop(nValue);
+			printf("Pop Result : %d\n", nRetCode);
+		}
+		else if (szBuffer[0] == 'f')
+		{
+			nValue = atoi(&szBuffer[2]);
+			nRetCode = tHeap.HasValue(nValue);
+			printf("Find Result : %d\n", nRetCode);	   
+		}
+		else if (szBuffer[0] == '0')
+		{
+			nRetCode = tHeap.FindMin();
+			printf("Find Result : %d\n", nRetCode);
+		}
+		else if (szBuffer[0] == '1')
+		{
+			nRetCode = tHeap.FindMax();
+			printf("Find Result : %d\n", nRetCode);
+		}
+		else
+		{
+			printf("UnKnown CMD\n");
+		}	 
+	}
+
+}

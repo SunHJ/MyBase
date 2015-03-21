@@ -37,6 +37,8 @@ int main(int argc, char* argv[])
 // 	Test_Pointer(); 
 //	TestSize<int> test;
 //	Test_Buffer();
-	Test_Net();
+//	Test_Net();
+	Test_Heap();
+
 	return 0;
 }

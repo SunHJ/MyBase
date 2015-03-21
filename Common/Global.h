@@ -6,12 +6,13 @@
 
 /*--------------------------------- GLOBAL VARIABLE DEFINE ----------------------------------*/
 
-CONST int MAX_FILE_PATH_LEN = 260;                // Include '\0' character
-CONST int MAX_FILE_NAME_LEN = 256;                // Include '\0' character
-CONST int MAX_FILE_EXT_LEN	= 256;                // Include '\0' character
-CONST int MAX_DIR_NAME_LEN	= 256;                // Include '\0' character
-
-CONST int MAX_IP_ADDR_LEN = 16;                     // Include '\0' character
+CONST INT MAX_FILE_PATH_LEN = 260;                // Include '\0' character
+CONST INT MAX_FILE_NAME_LEN = 256;                // Include '\0' character
+CONST INT MAX_FILE_EXT_LEN = 256;                // Include '\0' character
+CONST INT MAX_DIR_NAME_LEN = 256;                // Include '\0' character
+									   
+CONST INT MAX_IP_ADDR_LEN = 16;					  // Include '\0' character
+CONST INT DEFAULT_HEAP_SIZE = 32;                 // 
 CONST DWORD INVALID_ID_VALUE = static_cast<DWORD>(-1); // Invalid number id of a string
 
 CONST size_t DEFAULT_MAX_BUFFER_LEN = 8;

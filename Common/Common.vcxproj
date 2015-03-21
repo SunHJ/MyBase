@@ -92,6 +92,7 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClInclude Include="FileWraper.h" />
     <ClInclude Include="FrameControl.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="Heap.h" />
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Platform.h" />
@@ -121,6 +122,7 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="File.cpp" />
     <ClCompile Include="FrameControl.cpp" />
+    <ClCompile Include="Heap.cpp" />
     <ClCompile Include="SelecterServer.cpp" />
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="SocketAcceptor.cpp" />
