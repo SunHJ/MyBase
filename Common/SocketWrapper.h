@@ -34,7 +34,7 @@ public:
 	~NetService ();
 
 public:
-	BOOL Strat(WORD wHighVersion = 2, WORD wLowVersion = 2);
+	BOOL Start(WORD wHighVersion = 2, WORD wLowVersion = 2);
 	BOOL Stop();
 
 private:

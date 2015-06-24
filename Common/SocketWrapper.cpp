@@ -132,7 +132,7 @@ INT g_SelectDataIn(SOCKET nSocket, CONST timeval *pcTimeout)
 #ifdef PLATFORM_OS_WINDOWS
 NetService::NetService() : m_lStarted(0)
 {
-	NetService::Strat();
+	NetService::Start();
 }
 
 NetService::~NetService()
@@ -140,7 +140,7 @@ NetService::~NetService()
 	NetService::Stop();
 }
 
-BOOL NetService::Strat(WORD wHighVersion /* = 2 */, WORD wLowVersion /* = 2 */)
+BOOL NetService::Start(WORD wHighVersion /* = 2 */, WORD wLowVersion /* = 2 */)
 {
 	INT nRetCode = 0;
 	if (1 == g_AtomicIncrement(&m_lStarted))
