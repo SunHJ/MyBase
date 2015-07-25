@@ -35,4 +35,6 @@ public:
 	~Guard() { m_mutex.UnLock(); }
 };
 
+typedef Guard<CriticalSection> MutexGuard;
+
 #endif	//__SYNCHRONIZATION_CRITICAL_SECTION_H__

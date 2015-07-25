@@ -56,4 +56,5 @@ extern void Test_NetClient(CPCCHAR cpcIP, INT nPort);
 
 extern void Test_Heap();
 
+extern void Test_ThreadPool();
 #endif

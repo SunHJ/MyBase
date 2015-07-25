@@ -38,7 +38,8 @@ int main(int argc, char* argv[])
 //	TestSize<int> test;
 //	Test_Buffer();
 //	Test_Net();
-	Test_Heap();
+//	Test_Heap();
+    Test_ThreadPool();
 
 	return 0;
 }

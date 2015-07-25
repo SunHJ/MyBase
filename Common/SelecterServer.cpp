@@ -64,7 +64,7 @@ Exit0:
 SelecterServer::SelecterServer() : m_bStop(TRUE)
 {
 #ifdef PLATFORM_OS_WINDOWS
-	ASSERT(SINGLETON_GET_PTR(NetService)->Strat());
+	ASSERT(SINGLETON_GET_PTR(NetService)->Start());
 #endif // PLATFORM_OS_WINDOWS
 	PDynamicBuffer pBuffer = ::new DynamicBuffer(DEFAULT_BUFFER_SIZE);
 	m_spBuffer = SPDynamicBuffer(pBuffer);

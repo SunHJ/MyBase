@@ -5,7 +5,7 @@
 SuperServer::SuperServer()
 {
 #ifdef PLATFORM_OS_WINDOWS
-	SINGLETON_GET_PTR(NetService)->Strat();
+    SINGLETON_GET_PTR(NetService)->Start();
 	m_hThread = INVALID_HANDLE_VALUE;
 #endif // PLATFORM_OS_WINDOWS
 

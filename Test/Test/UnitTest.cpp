@@ -186,7 +186,7 @@ VOID RecvThread(PVOID pParam)
 Client::Client()
 {
 #ifdef PLATFORM_OS_WINDOWS
-	SINGLETON_GET_PTR(NetService)->Strat();
+    SINGLETON_GET_PTR(NetService)->Start();
 #endif	
 
 	m_pConnectSocket = NULL;
@@ -396,4 +396,61 @@ void Test_Heap()
 		}	 
 	}
 
+}
+
+#include "ThreadPool.h"
+typedef struct JobParam
+{
+    char szName[32];
+    int nParam1;
+    int nParam2;
+    JobParam(){
+        memset(szName, 0, sizeof(szName));
+        nParam1 = 0;
+        nParam2 = 0;
+    }
+} *PJobParam;
+
+class MyJob : public ThreadJob
+{
+public:
+    MyJob(const char* cpRemoteFileName = NULL){};
+
+    void DoJob(void* pParam)
+    {
+        PJobParam pJobParam = (PJobParam)pParam;
+        FILE* pFile = fopen(pJobParam->szName, "w+");
+        fprintf(pFile, "nParam1:%d nParam2:%d\n", pJobParam->nParam1, pJobParam->nParam2);
+        for (int i = 0; i < pJobParam->nParam1; i++)
+        {
+            fprintf(pFile, "\tLoop:%d\n", i);
+            Sleep(pJobParam->nParam2);
+        }
+        fclose(pFile);
+    }
+};
+
+void Test_ThreadPool()
+{
+    srand(time(NULL));
+    ThreadPool threadPool(16);
+    const int nJobCount = 100;
+    MyJob JobList[nJobCount];
+    JobParam ParamList[nJobCount];
+    for (int i = 0; i < nJobCount; i++)
+    {
+        MyJob* pCurJob = &JobList[i];
+        JobParam* pCurParam = &ParamList[i];
+        sprintf(pCurParam->szName, "Thread_%d.txt", i);
+        pCurParam->nParam1 = 5 + (rand() % 5);
+        pCurParam->nParam2 = (1 + (rand() % 5)) * 5;
+        threadPool.Call(pCurJob, (void*)(pCurParam));
+    }
+
+    do {
+        printf("Thread Num :%d %d\r", threadPool.Size(), threadPool.GetRunningSize());
+        Sleep(50);
+    } while (threadPool.GetRunningSize());
+    printf("\n");
+    threadPool.EndAndWait();
 }

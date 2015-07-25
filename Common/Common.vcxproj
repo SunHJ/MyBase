@@ -97,6 +97,7 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="Public.h" />
+    <ClInclude Include="PublicStruct.h" />
     <ClInclude Include="RefCounter.h" />
     <ClInclude Include="ScopedArrayPtr.h" />
     <ClInclude Include="ScopedPtr.h" />
@@ -113,6 +114,7 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClInclude Include="SocketWrapper.h" />
     <ClInclude Include="SuperServer.h" />
     <ClInclude Include="Thread.h" />
+    <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="UniversalQueue.h" />
   </ItemGroup>
@@ -136,6 +138,7 @@ copy $(OutDir)$(TargetName)$(TargetExt) ..\Lib\Debug</Command>
     <ClCompile Include="SocketWrapper.cpp" />
     <ClCompile Include="SuperServer.cpp" />
     <ClCompile Include="Thread.cpp" />
+    <ClCompile Include="ThreadPool.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
