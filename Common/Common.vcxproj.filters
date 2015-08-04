@@ -110,6 +110,12 @@
     <ClInclude Include="Heap.h">
       <Filter>Structure</Filter>
     </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Synchronization</Filter>
+    </ClInclude>
+    <ClInclude Include="PublicStruct.h">
+      <Filter>Synchronization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Thread.cpp">
@@ -168,6 +174,9 @@
     </ClCompile>
     <ClCompile Include="Heap.cpp">
       <Filter>Structure</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadPool.cpp">
+      <Filter>Synchronization</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

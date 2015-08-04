@@ -5,6 +5,7 @@
 #include "Macro.h"
 #include "Global.h"
 #include "Thread.h"
+#include "ThreadPool.h"
 #include "SharedPtr.h"
 #include "File.h"  
 #include "Heap.h"
