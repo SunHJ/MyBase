@@ -110,6 +110,7 @@
     <ClInclude Include="Heap.h">
       <Filter>Structure</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="Thread.h">
       <Filter>Thread</Filter>
     </ClInclude>
@@ -118,6 +119,13 @@
     </ClInclude>
     <ClInclude Include="PublicStruct.h">
       <Filter>Thread</Filter>
+=======
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Synchronization</Filter>
+    </ClInclude>
+    <ClInclude Include="PublicStruct.h">
+      <Filter>Synchronization</Filter>
+>>>>>>> 6a25b0f184d46cfdaba5726e38084eae18417c61
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -175,11 +183,16 @@
     <ClCompile Include="Heap.cpp">
       <Filter>Structure</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Thread.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
     <ClCompile Include="ThreadPool.cpp">
       <Filter>Thread</Filter>
+=======
+    <ClCompile Include="ThreadPool.cpp">
+      <Filter>Synchronization</Filter>
+>>>>>>> 6a25b0f184d46cfdaba5726e38084eae18417c61
     </ClCompile>
   </ItemGroup>
 </Project>
