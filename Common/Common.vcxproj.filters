@@ -19,6 +19,9 @@
     <Filter Include="Net">
       <UniqueIdentifier>{dd8d359f-53d5-467a-9fa5-1be76e2ace52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{190b3be4-1caa-455c-aa3f-1a3ee81dff70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public.h" />
@@ -34,9 +37,6 @@
     </ClInclude>
     <ClInclude Include="Global.h">
       <Filter>Public</Filter>
-    </ClInclude>
-    <ClInclude Include="Thread.h">
-      <Filter>Synchronization</Filter>
     </ClInclude>
     <ClInclude Include="CriticalSection.h">
       <Filter>Synchronization</Filter>
@@ -110,11 +110,17 @@
     <ClInclude Include="Heap.h">
       <Filter>Structure</Filter>
     </ClInclude>
+    <ClInclude Include="Thread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="PublicStruct.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Thread.cpp">
-      <Filter>Synchronization</Filter>
-    </ClCompile>
     <ClCompile Include="CriticalSection.cpp">
       <Filter>Synchronization</Filter>
     </ClCompile>
@@ -168,6 +174,12 @@
     </ClCompile>
     <ClCompile Include="Heap.cpp">
       <Filter>Structure</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadPool.cpp">
+      <Filter>Thread</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
